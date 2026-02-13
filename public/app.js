@@ -1,7 +1,8 @@
 // Application State
 const state = {
     subscriptions: [],
-    isExtracting: false
+    isExtracting: false,
+    progressTimeouts: []
 };
 
 // DOM Elements
@@ -186,27 +187,31 @@ function updateUIState(state) {
 // Animate Progress Bar
 function animateProgress() {
     const steps = [
-        { percent: 20, text: 'Connecting to WeebCentral...' },
-        { percent: 40, text: 'Loading profile...' },
-        { percent: 60, text: 'Extracting subscriptions...' },
-        { percent: 80, text: 'Finalizing...' },
-        { percent: 95, text: 'Almost there...' }
+        { percent: 10, text: 'Connecting to WeebCentral...', delay: 500 },
+        { percent: 30, text: 'Loading profile...', delay: 2000 },
+        { percent: 50, text: 'Extracting subscriptions...', delay: 4000 },
+        { percent: 60, text: 'Still extracting (this may take a while)...', delay: 8000 },
+        { percent: 70, text: 'Clicking "View More" buttons...', delay: 15000 },
+        { percent: 80, text: 'Processing data...', delay: 25000 },
+        { percent: 90, text: 'Finalizing...', delay: 35000 }
     ];
 
-    let currentStep = 0;
+    let timeouts = [];
 
-    const interval = setInterval(() => {
-        if (currentStep >= steps.length) {
-            clearInterval(interval);
-            return;
-        }
+    // Clear any existing progress animation if restarts happen
+    if (state.progressTimeouts) {
+        state.progressTimeouts.forEach(clearTimeout);
+    }
+    state.progressTimeouts = timeouts;
 
-        const step = steps[currentStep];
-        elements.progressFill.style.width = `${step.percent}%`;
-        elements.progressText.textContent = step.text;
-
-        currentStep++;
-    }, 800);
+    steps.forEach(step => {
+        const t = setTimeout(() => {
+            if (!state.isExtracting) return;
+            elements.progressFill.style.width = `${step.percent}%`;
+            elements.progressText.textContent = step.text;
+        }, step.delay);
+        timeouts.push(t);
+    });
 }
 
 // Show Notification Toast
