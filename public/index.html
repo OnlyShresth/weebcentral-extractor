@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeebCentral Extractor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            color: #fff;
+        }
+
+        .modal-description {
+            color: #888;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .modal-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">WeebCentral Extractor</h1>
+            <p class="subtitle">Extract and export your manga subscriptions</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <form id="extractForm" class="extract-form">
+                    <div class="form-group">
+                        <label for="profileUrl">Profile URL</label>
+                        <div class="input-wrapper">
+                            <input type="url" id="profileUrl" class="url-input"
+                                placeholder="https://weebcentral.com/users/..." required>
+                            <button type="submit" class="btn-primary" id="extractBtn">
+                                Extract
+                            </button>
+                        </div>
+                        <span class="hint">Paste your WeebCentral profile URL</span>
+                    </div>
+                </form>
+
+                <!-- Progress -->
+                <div class="progress-container hidden" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Loading...</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="resultsSection">
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Found</span>
+                        <span class="stat-value" id="totalCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Export Formats</span>
+                        <span class="stat-value">4</span>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div class="export-section">
+                    <h2 class="section-title">Download Exports</h2>
+
+                    <div class="export-grid">
+                        <div class="export-group">
+                            <h3 class="export-title">MyAnimeList</h3>
+                            <button class="btn-export" data-file="malXml">
+                                <span>XML Format</span>
+                                <span class="label-secondary">Direct Import</span>
+                            </button>
+                            <button class="btn-export" data-file="malText">
+                                <span>Text List</span>
+                                <span class="label-secondary">Manual Entry</span>
+                            </button>
+                        </div>
+
+                        <div class="export-group">
+                            <h3 class="export-title">MangaDex</h3>
+                            <button class="btn-export" data-file="mangaDexJson">
+                                <span>JSON Format</span>
+                                <span class="label-secondary">API Ready</span>
+                            </button>
+                            <button class="btn-export" data-file="mangaDexText">
+                                <span>Text List</span>
+                                <span class="label-secondary">Search Guide</span>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- Subscriptions Grid -->
+                <div class="subscriptions-section">
+                    <h2 class="section-title">Your Subscriptions</h2>
+                    <div class="subscriptions-grid" id="subscriptionsList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Enrichment Modal -->
+        <div id="enrichModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Enriching Data...</h3>
+                <p class="modal-description">Fetching IDs from external APIs to ensure valid import.</p>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="enrichmentFill"></div>
+                </div>
+
+                <div class="modal-stats">
+                    <span id="enrichmentCount">Processing 0/0</span>
+                    <span id="enrichmentEta">Calculating time...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>WeebCentral Extractor &copy; 2026</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
