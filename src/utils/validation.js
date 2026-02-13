@@ -14,9 +14,9 @@ export function validateProfileUrl(url) {
             error: 'URL is required and must be a string'
         };
     }
-    
+
     const trimmedUrl = url.trim();
-    
+
     // Check if it's a valid URL
     try {
         new URL(trimmedUrl);
@@ -26,7 +26,7 @@ export function validateProfileUrl(url) {
             error: 'Invalid URL format'
         };
     }
-    
+
     // Check if it's a WeebCentral URL
     if (!trimmedUrl.includes('weebcentral.com')) {
         return {
@@ -34,7 +34,7 @@ export function validateProfileUrl(url) {
             error: 'URL must be from weebcentral.com'
         };
     }
-    
+
     // Check if it's a user profile URL
     if (!trimmedUrl.includes('/users/')) {
         return {
@@ -42,7 +42,7 @@ export function validateProfileUrl(url) {
             error: 'URL must be a user profile URL (must contain /users/)'
         };
     }
-    
+
     return {
         valid: true,
         url: trimmedUrl
@@ -56,7 +56,7 @@ export function validateProfileUrl(url) {
  */
 export function sanitizeUserId(userId) {
     if (!userId) return 'unknown';
-    
+
     // Remove any path traversal attempts and special characters
     return userId
         .replace(/\.\./g, '')
@@ -77,24 +77,24 @@ export function validateSubscriptions(subscriptions) {
             error: 'Subscriptions must be an array'
         };
     }
-    
+
     if (subscriptions.length === 0) {
         return {
             valid: true,
             warning: 'No subscriptions found'
         };
     }
-    
+
     // Validate each subscription has required fields
     const invalidItems = subscriptions.filter(sub => !sub.title);
-    
+
     if (invalidItems.length > 0) {
         return {
             valid: false,
             error: `${invalidItems.length} subscriptions are missing required 'title' field`
         };
     }
-    
+
     return {
         valid: true,
         count: subscriptions.length
@@ -107,6 +107,6 @@ export function validateSubscriptions(subscriptions) {
  * @returns {boolean} Whether the file type is valid
  */
 export function validateFileType(fileType) {
-    const validTypes = ['malXml', 'malText', 'mangaDexJson', 'mangaDexText', 'csv', 'summary'];
+    const validTypes = ['anilistXml', 'muCsv', 'muJson'];
     return validTypes.includes(fileType);
 }

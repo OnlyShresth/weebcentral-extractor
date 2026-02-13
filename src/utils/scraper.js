@@ -83,20 +83,7 @@ export async function scrapeSubscriptions(profileUrl) {
       await page.waitForTimeout(2000);
     }
 
-    // After the subscriptionsTabClicked block, add:
-    console.log(`Taking screenshot...`);
-    await page.screenshot({ path: './after-tab-click.png' });
 
-    // Log what's on the page
-    const pageContent = await page.evaluate(() => {
-      return {
-        allText: document.body.innerText.substring(0, 500),
-        buttons: Array.from(document.querySelectorAll('button')).map(b => b.textContent?.trim()),
-        divCount: document.querySelectorAll('div').length,
-        hasSubscriptionWord: document.body.innerHTML.includes('Subscription')
-      };
-    });
-    console.log('Page content:', pageContent);
 
     if (subscriptionsTabClicked) {
       console.log(`Clicked Subscriptions tab, waiting for content...`);
@@ -142,24 +129,7 @@ export async function scrapeSubscriptions(profileUrl) {
     });
     console.log(`Total images on page: ${itemCount}`);
 
-    // DEBUG: Log what we actually see
-    // DEBUG: Check images
-    const debugInfo = await page.evaluate(() => {
-      const images = Array.from(document.querySelectorAll('img'));
 
-      return {
-        totalImages: images.length,
-        imageInfo: images.slice(0, 15).map(img => ({
-          src: img.src?.substring(0, 80),
-          alt: img.alt,
-          title: img.title,
-          ariaLabel: img.getAttribute('aria-label'),
-          parentText: img.parentElement?.textContent?.trim().substring(0, 50)
-        }))
-      };
-    });
-
-    console.log('DEBUG INFO:', JSON.stringify(debugInfo, null, 2));
     console.log(`Finished pagination. Extracting subscription data...`);
 
     // Extract all subscriptions from the page

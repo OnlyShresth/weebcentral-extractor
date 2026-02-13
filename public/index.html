@@ -115,32 +115,30 @@
                 <div class="export-section">
                     <h2 class="section-title">Download Exports</h2>
 
-                    <div class="export-grid">
-                        <div class="export-group">
-                            <h3 class="export-title">MyAnimeList</h3>
-                            <button class="btn-export" data-file="malXml">
-                                <span>XML Format</span>
-                                <span class="label-secondary">Direct Import</span>
-                            </button>
-                            <button class="btn-export" data-file="malText">
-                                <span>Text List</span>
-                                <span class="label-secondary">Manual Entry</span>
-                            </button>
-                        </div>
+                    <!-- Step 1: Verification -->
+                    <div class="export-group">
+                        <h3 class="export-title">Step 1: Verification</h3>
+                        <button class="btn-export primary" data-file="enrichment">
+                            <span>Verify with MangaUpdates</span>
+                            <span class="label-secondary">Recommended</span>
+                        </button>
+                    </div>
 
-                        <div class="export-group">
-                            <h3 class="export-title">MangaDex</h3>
-                            <button class="btn-export" data-file="mangaDexJson">
-                                <span>JSON Format</span>
-                                <span class="label-secondary">API Ready</span>
-                            </button>
-                            <button class="btn-export" data-file="mangaDexText">
-                                <span>Text List</span>
-                                <span class="label-secondary">Search Guide</span>
-                            </button>
-                        </div>
-
-
+                    <!-- Step 2: Exports -->
+                    <div class="export-group">
+                        <h3 class="export-title">Step 2: Export</h3>
+                        <button class="btn-export" data-file="anilistXml">
+                            <span>AniList Import</span>
+                            <span class="label-secondary">XML Format</span>
+                        </button>
+                        <button class="btn-export" data-file="muCsv">
+                            <span>MangaUpdates CSV</span>
+                            <span class="label-secondary">Manual List</span>
+                        </button>
+                        <button class="btn-export" data-file="muJson">
+                            <span>MangaUpdates JSON</span>
+                            <span class="label-secondary">Bot Data</span>
+                        </button>
                     </div>
                 </div>
 

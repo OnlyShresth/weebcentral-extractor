@@ -2,9 +2,9 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { scrapeSubscriptions, extractUserId } from './utils/scraper.js';
-import { enrichWithJikan } from './utils/enricher.js';
-import { exportToMAL, exportToMALText } from './exporters/mal.js';
-import { exportToMangaDex, exportToMangaDexText } from './exporters/mangadex.js';
+import { enrichWithMangaUpdates } from './utils/enricher.js';
+import { exportToAniList } from './exporters/anilist.js';
+import { exportToMUCsv, exportToMUJson } from './exporters/mangaupdates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -78,8 +78,7 @@ app.post('/api/extract', async (req, res) => {
       userId,
       timestamp: Date.now(),
       enrichment: {
-        mal: { status: 'idle', current: 0, total: subscriptions.length },
-        mangadex: { status: 'idle', current: 0, total: subscriptions.length }
+        mangaupdates: { status: 'idle', current: 0, total: subscriptions.length }
       }
     });
 
@@ -113,36 +112,32 @@ app.post('/api/enrich', (req, res) => {
     return res.status(404).json({ error: 'Session not found' });
   }
 
-  if (!['mal', 'mangadex'].includes(target)) {
-    return res.status(400).json({ error: 'Invalid target' });
+  if (target !== 'mangaupdates') {
+    return res.status(400).json({ error: 'Invalid target. Only MangaUpdates is supported.' });
   }
 
   // If already running or complete, return current status
-  if (session.enrichment[target].status !== 'idle') {
-    return res.json({ success: true, status: session.enrichment[target] });
+  if (session.enrichment.mangaupdates.status !== 'idle') {
+    return res.json({ success: true, status: session.enrichment.mangaupdates });
   }
 
   // Start enrichment in background
-  session.enrichment[target].status = 'enriching';
+  session.enrichment.mangaupdates.status = 'enriching';
 
   const onProgress = (current, total) => {
-    session.enrichment[target].current = current;
-    session.enrichment[target].total = total;
+    session.enrichment.mangaupdates.current = current;
+    session.enrichment.mangaupdates.total = total;
   };
 
-  const enrichPromise = target === 'mal'
-    ? enrichWithJikan(session.subscriptions, onProgress)
-    : enrichWithMangaDex(session.subscriptions, onProgress);
-
-  enrichPromise
+  enrichWithMangaUpdates(session.subscriptions, onProgress)
     .then(enrichedSubs => {
       session.subscriptions = enrichedSubs;
-      session.enrichment[target].status = 'complete';
-      session.enrichment[target].current = session.subscriptions.length;
+      session.enrichment.mangaupdates.status = 'complete';
+      session.enrichment.mangaupdates.current = session.subscriptions.length;
     })
     .catch(err => {
-      console.error(`❌ Enrichment error (${target}):`, err);
-      session.enrichment[target].status = 'error';
+      console.error(`❌ Enrichment error (mangaupdates):`, err);
+      session.enrichment.mangaupdates.status = 'error';
     });
 
   res.json({ success: true, status: 'started' });
@@ -187,26 +182,22 @@ app.get('/api/download/:sessionId/:format', (req, res) => {
     let contentType = 'text/plain';
 
     switch (format) {
-      case 'malXml':
-        content = exportToMAL(subscriptions);
-        filename = `${baseFilename}_mal.xml`;
+      case 'anilistXml':
+        content = exportToAniList(subscriptions);
+        filename = `${baseFilename}_anilist.xml`;
         contentType = 'application/xml';
         break;
 
-      case 'malText':
-        content = exportToMALText(subscriptions);
-        filename = `${baseFilename}_mal.txt`;
+      case 'muCsv':
+        content = exportToMUCsv(subscriptions);
+        filename = `${baseFilename}_mangaupdates.csv`;
+        contentType = 'text/csv';
         break;
 
-      case 'mangaDexJson':
-        content = exportToMangaDex(subscriptions);
-        filename = `${baseFilename}_mangadex.json`;
+      case 'muJson':
+        content = exportToMUJson(subscriptions);
+        filename = `${baseFilename}_mangaupdates.json`;
         contentType = 'application/json';
-        break;
-
-      case 'mangaDexText':
-        content = exportToMangaDexText(subscriptions);
-        filename = `${baseFilename}_mangadex.txt`;
         break;
 
       default:

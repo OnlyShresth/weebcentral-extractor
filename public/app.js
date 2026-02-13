@@ -158,13 +158,6 @@ function createSubscriptionCard(subscription) {
     return card;
 }
 
-// Helper to get enrichment target from format
-function getEnrichmentTarget(format) {
-    if (format.startsWith('mal')) return 'mal';
-    if (format.startsWith('mangaDex')) return 'mangadex';
-    return null;
-}
-
 // Handle Download Button Click
 async function handleDownload(e) {
     const fileFormat = e.currentTarget.dataset.file;
@@ -174,29 +167,45 @@ async function handleDownload(e) {
         return;
     }
 
-    const target = getEnrichmentTarget(fileFormat);
-
-    // If format doesn't need enrichment (e.g. raw text), download immediately
-    if (!target) {
-        triggerDownload(fileFormat);
+    // Step 1: Verification (Enrichment only)
+    if (fileFormat === 'enrichment') {
+        const status = await checkEnrichmentStatus('mangaupdates');
+        if (status === 'complete') {
+            showNotification('Verification already complete!', 'success');
+        } else {
+            startEnrichment('mangaupdates', null);
+        }
         return;
     }
 
-    // Check if enrichment is already complete
-    try {
-        const statusRes = await fetch(`/api/session/${state.sessionId}`);
-        const statusData = await statusRes.json();
+    // High-value exports that require enrichment
+    if (['anilistXml', 'muCsv', 'muJson'].includes(fileFormat)) {
+        const target = 'mangaupdates';
+        const status = await checkEnrichmentStatus(target);
 
-        if (statusData.enrichment && statusData.enrichment[target].status === 'complete') {
+        if (status === 'complete') {
             triggerDownload(fileFormat);
-            return;
+        } else {
+            // Auto-start enrichment if not done
+            showNotification('Verifying data before export...', 'info');
+            startEnrichment(target, fileFormat);
         }
-    } catch (err) {
-        console.error('Error checking session status:', err);
+    } else {
+        // Fallback for any other formats
+        triggerDownload(fileFormat);
     }
+}
 
-    // Start Enrichment Flow
-    startEnrichment(target, fileFormat);
+// Helper to check enrichment status
+async function checkEnrichmentStatus(target) {
+    try {
+        const res = await fetch(`/api/session/${state.sessionId}`);
+        const data = await res.json();
+        return data.enrichment && data.enrichment[target] ? data.enrichment[target].status : 'idle';
+    } catch (err) {
+        console.error('Error checking status:', err);
+        return 'error';
+    }
 }
 
 // Trigger Actual Download
@@ -236,19 +245,27 @@ async function startEnrichment(target, finalFormat) {
         const poll = setInterval(async () => {
             const res = await fetch(`/api/session/${state.sessionId}`);
             const data = await res.json();
+
+            if (!data.enrichment || !data.enrichment[target]) {
+                return;
+            }
+
             const status = data.enrichment[target];
 
             if (status.status === 'complete') {
                 clearInterval(poll);
                 modal.classList.add('hidden');
-                triggerDownload(finalFormat);
-                showNotification('Enrichment complete!', 'success');
+
+                if (finalFormat) {
+                    triggerDownload(finalFormat);
+                } else {
+                    showNotification('Verification complete!', 'success');
+                }
             }
             else if (status.status === 'error') {
                 clearInterval(poll);
                 modal.classList.add('hidden');
-                showNotification('Enrichment failed. Downloading raw data...', 'warning');
-                triggerDownload(finalFormat);
+                showNotification('Verification failed. Please try again.', 'error');
             }
             else {
                 // Update UI
@@ -256,8 +273,8 @@ async function startEnrichment(target, finalFormat) {
                 fill.style.width = `${percent}%`;
                 count.textContent = `Processing ${status.current}/${status.total}`;
 
-                // Calculate ETA (1.2s per item for MAL, 0.3s for MangaDex)
-                const rate = target === 'mal' ? 1.2 : 0.3;
+                // Calculate ETA (1s per item for MangaUpdates)
+                const rate = 1.0;
                 const remaining = status.total - status.current;
                 const secondsLeft = Math.ceil(remaining * rate);
                 eta.textContent = `~${secondsLeft}s remaining`;
