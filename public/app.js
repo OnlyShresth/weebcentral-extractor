@@ -1,7 +1,6 @@
 // Application State
 const state = {
     subscriptions: [],
-    files: null,
     isExtracting: false
 };
 
@@ -27,11 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Setup Event Listeners
 function setupEventListeners() {
     elements.form.addEventListener('submit', handleExtract);
-
-    // Setup download button listeners
-    document.querySelectorAll('.btn-export').forEach(btn => {
-        btn.addEventListener('click', handleDownload);
-    });
 }
 
 // Handle Extract Form Submission
@@ -89,8 +83,11 @@ async function handleExtract(e) {
 function handleExtractionSuccess(data) {
     console.log('Extraction success:', data);
     state.subscriptions = data.subscriptions;
-    state.sessionId = data.sessionId;
-    console.log('Session ID stored:', state.sessionId);
+
+    // Session ID is still returned but not used for exports anymore
+    if (data.sessionId) {
+        console.log('Session ID:', data.sessionId);
+    }
 
     updateUIState('success');
     displayResults();
@@ -158,136 +155,6 @@ function createSubscriptionCard(subscription) {
     return card;
 }
 
-// Handle Download Button Click
-async function handleDownload(e) {
-    const fileFormat = e.currentTarget.dataset.file;
-
-    if (!state.sessionId) {
-        showNotification('Session expired or invalid. Please extract again.', 'error');
-        return;
-    }
-
-    // Step 1: Verification (Enrichment only)
-    if (fileFormat === 'enrichment') {
-        const status = await checkEnrichmentStatus('mangaupdates');
-        if (status === 'complete') {
-            showNotification('Verification already complete!', 'success');
-        } else {
-            startEnrichment('mangaupdates', null);
-        }
-        return;
-    }
-
-    // High-value exports that require enrichment
-    if (['anilistXml', 'muCsv', 'muJson'].includes(fileFormat)) {
-        const target = 'mangaupdates';
-        const status = await checkEnrichmentStatus(target);
-
-        if (status === 'complete') {
-            triggerDownload(fileFormat);
-        } else {
-            // Auto-start enrichment if not done
-            showNotification('Verifying data before export...', 'info');
-            startEnrichment(target, fileFormat);
-        }
-    } else {
-        // Fallback for any other formats
-        triggerDownload(fileFormat);
-    }
-}
-
-// Helper to check enrichment status
-async function checkEnrichmentStatus(target) {
-    try {
-        const res = await fetch(`/api/session/${state.sessionId}`);
-        const data = await res.json();
-        return data.enrichment && data.enrichment[target] ? data.enrichment[target].status : 'idle';
-    } catch (err) {
-        console.error('Error checking status:', err);
-        return 'error';
-    }
-}
-
-// Trigger Actual Download
-function triggerDownload(format) {
-    const downloadUrl = `/api/download/${state.sessionId}/${format}`;
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showNotification(`Download started`, 'success');
-}
-
-// Start Enrichment Process
-async function startEnrichment(target, finalFormat) {
-    const modal = document.getElementById('enrichModal');
-    const fill = document.getElementById('enrichmentFill');
-    const count = document.getElementById('enrichmentCount');
-    const eta = document.getElementById('enrichmentEta');
-
-    // Reset Modal UI
-    fill.style.width = '0%';
-    count.textContent = 'Starting...';
-    eta.textContent = 'Calculating...';
-    modal.classList.remove('hidden');
-
-    try {
-        // Start process
-        await fetch('/api/enrich', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId: state.sessionId, target })
-        });
-
-        // Poll progress
-        const poll = setInterval(async () => {
-            const res = await fetch(`/api/session/${state.sessionId}`);
-            const data = await res.json();
-
-            if (!data.enrichment || !data.enrichment[target]) {
-                return;
-            }
-
-            const status = data.enrichment[target];
-
-            if (status.status === 'complete') {
-                clearInterval(poll);
-                modal.classList.add('hidden');
-
-                if (finalFormat) {
-                    triggerDownload(finalFormat);
-                } else {
-                    showNotification('Verification complete!', 'success');
-                }
-            }
-            else if (status.status === 'error') {
-                clearInterval(poll);
-                modal.classList.add('hidden');
-                showNotification('Verification failed. Please try again.', 'error');
-            }
-            else {
-                // Update UI
-                const percent = (status.current / status.total) * 100;
-                fill.style.width = `${percent}%`;
-                count.textContent = `Processing ${status.current}/${status.total}`;
-
-                // Calculate ETA (1s per item for MangaUpdates)
-                const rate = 1.0;
-                const remaining = status.total - status.current;
-                const secondsLeft = Math.ceil(remaining * rate);
-                eta.textContent = `~${secondsLeft}s remaining`;
-            }
-        }, 1000);
-
-    } catch (err) {
-        console.error('Enrichment error:', err);
-        modal.classList.add('hidden');
-        showNotification('Failed to start enrichment', 'error');
-    }
-}
-
 // Update UI State
 function updateUIState(state) {
     switch (state) {
@@ -322,8 +189,8 @@ function animateProgress() {
         { percent: 20, text: 'Connecting to WeebCentral...' },
         { percent: 40, text: 'Loading profile...' },
         { percent: 60, text: 'Extracting subscriptions...' },
-        { percent: 80, text: 'Generating export files...' },
-        { percent: 95, text: 'Finalizing...' }
+        { percent: 80, text: 'Finalizing...' },
+        { percent: 95, text: 'Almost there...' }
     ];
 
     let currentStep = 0;

@@ -2,9 +2,6 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { scrapeSubscriptions, extractUserId } from './utils/scraper.js';
-import { enrichWithMangaUpdates } from './utils/enricher.js';
-import { exportToAniList } from './exporters/anilist.js';
-import { exportToMUCsv, exportToMUJson } from './exporters/mangaupdates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -76,10 +73,7 @@ app.post('/api/extract', async (req, res) => {
     sessions.set(sessionId, {
       subscriptions,
       userId,
-      timestamp: Date.now(),
-      enrichment: {
-        mangaupdates: { status: 'idle', current: 0, total: subscriptions.length }
-      }
+      timestamp: Date.now()
     });
 
     console.log(`✅ Extraction complete. Session created: ${sessionId}`);
@@ -97,120 +91,6 @@ app.post('/api/extract', async (req, res) => {
       success: false,
       error: error.message
     });
-  }
-});
-
-/**
- * POST /api/enrich
- * Start enrichment process for a session
- */
-app.post('/api/enrich', (req, res) => {
-  const { sessionId, target } = req.body;
-  const session = sessions.get(sessionId);
-
-  if (!session) {
-    return res.status(404).json({ error: 'Session not found' });
-  }
-
-  if (target !== 'mangaupdates') {
-    return res.status(400).json({ error: 'Invalid target. Only MangaUpdates is supported.' });
-  }
-
-  // If already running or complete, return current status
-  if (session.enrichment.mangaupdates.status !== 'idle') {
-    return res.json({ success: true, status: session.enrichment.mangaupdates });
-  }
-
-  // Start enrichment in background
-  session.enrichment.mangaupdates.status = 'enriching';
-
-  const onProgress = (current, total) => {
-    session.enrichment.mangaupdates.current = current;
-    session.enrichment.mangaupdates.total = total;
-  };
-
-  enrichWithMangaUpdates(session.subscriptions, onProgress)
-    .then(enrichedSubs => {
-      session.subscriptions = enrichedSubs;
-      session.enrichment.mangaupdates.status = 'complete';
-      session.enrichment.mangaupdates.current = session.subscriptions.length;
-    })
-    .catch(err => {
-      console.error(`❌ Enrichment error (mangaupdates):`, err);
-      session.enrichment.mangaupdates.status = 'error';
-    });
-
-  res.json({ success: true, status: 'started' });
-});
-
-/**
- * GET /api/session/:sessionId
- * Get current session state (for polling progress)
- */
-app.get('/api/session/:sessionId', (req, res) => {
-  const { sessionId } = req.params;
-  const session = sessions.get(sessionId);
-
-  if (!session) {
-    return res.status(404).json({ error: 'Session not found' });
-  }
-
-  res.json({
-    enrichment: session.enrichment
-  });
-});
-
-/**
- * GET /api/download/:sessionId/:format
- * Download subscriptions in requested format
- */
-app.get('/api/download/:sessionId/:format', (req, res) => {
-  try {
-    const { sessionId, format } = req.params;
-    const session = sessions.get(sessionId);
-
-    if (!session) {
-      return res.status(404).send('Session expired or not found. Please extract again.');
-    }
-
-    const { subscriptions, userId } = session;
-    const date = new Date().toISOString().split('T')[0];
-    const baseFilename = `weebcentral_${userId}_${date}`;
-
-    let content = '';
-    let filename = '';
-    let contentType = 'text/plain';
-
-    switch (format) {
-      case 'anilistXml':
-        content = exportToAniList(subscriptions);
-        filename = `${baseFilename}_anilist.xml`;
-        contentType = 'application/xml';
-        break;
-
-      case 'muCsv':
-        content = exportToMUCsv(subscriptions);
-        filename = `${baseFilename}_mangaupdates.csv`;
-        contentType = 'text/csv';
-        break;
-
-      case 'muJson':
-        content = exportToMUJson(subscriptions);
-        filename = `${baseFilename}_mangaupdates.json`;
-        contentType = 'application/json';
-        break;
-
-      default:
-        return res.status(400).send('Invalid format');
-    }
-
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Type', contentType);
-    res.send(content);
-
-  } catch (error) {
-    console.error('❌ Error in /api/download:', error);
-    res.status(500).send('Error generating download');
   }
 });
 

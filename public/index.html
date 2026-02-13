@@ -111,37 +111,6 @@
                     </div>
                 </div>
 
-                <!-- Export Options -->
-                <div class="export-section">
-                    <h2 class="section-title">Download Exports</h2>
-
-                    <!-- Step 1: Verification -->
-                    <div class="export-group">
-                        <h3 class="export-title">Step 1: Verification</h3>
-                        <button class="btn-export primary" data-file="enrichment">
-                            <span>Verify with MangaUpdates</span>
-                            <span class="label-secondary">Recommended</span>
-                        </button>
-                    </div>
-
-                    <!-- Step 2: Exports -->
-                    <div class="export-group">
-                        <h3 class="export-title">Step 2: Export</h3>
-                        <button class="btn-export" data-file="anilistXml">
-                            <span>AniList Import</span>
-                            <span class="label-secondary">XML Format</span>
-                        </button>
-                        <button class="btn-export" data-file="muCsv">
-                            <span>MangaUpdates CSV</span>
-                            <span class="label-secondary">Manual List</span>
-                        </button>
-                        <button class="btn-export" data-file="muJson">
-                            <span>MangaUpdates JSON</span>
-                            <span class="label-secondary">Bot Data</span>
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Subscriptions Grid -->
                 <div class="subscriptions-section">
                     <h2 class="section-title">Your Subscriptions</h2>
@@ -152,22 +121,7 @@
             </section>
         </main>
 
-        <!-- Enrichment Modal -->
-        <div id="enrichModal" class="modal-overlay hidden">
-            <div class="modal-content">
-                <h3 class="modal-title">Enriching Data...</h3>
-                <p class="modal-description">Fetching IDs from external APIs to ensure valid import.</p>
 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="enrichmentFill"></div>
-                </div>
-
-                <div class="modal-stats">
-                    <span id="enrichmentCount">Processing 0/0</span>
-                    <span id="enrichmentEta">Calculating time...</span>
-                </div>
-            </div>
-        </div>
 
         <!-- Footer -->
         <footer class="footer">
