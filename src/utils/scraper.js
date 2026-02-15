@@ -1,30 +1,21 @@
-import puppeteer from 'puppeteer';
+// Puppeteer import removed, passed from server
+
 
 /**
  * Scrapes subscription data from a WeebCentral profile
  * Uses Puppeteer to handle dynamic content, tab switching, and pagination
  * @param {string} profileUrl - The WeebCentral profile URL
+ * @param {object} browser - Shared Puppeteer browser instance
  * @returns {Promise<Array>} Array of subscription objects
  */
-export async function scrapeSubscriptions(profileUrl) {
-  let browser;
+export async function scrapeSubscriptions(profileUrl, browser) {
+  let page;
 
   try {
-    console.log(`Launching browser for: ${profileUrl}`);
+    console.log(`Using shared browser for: ${profileUrl}`);
 
-    browser = await puppeteer.launch({
-      headless: "new",
-      devtools: false,
-      slowMo: 0,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
-      ]
-    });
-
-    const page = await browser.newPage();
+    // Create new page from shared browser
+    page = await browser.newPage();
 
     // Optimize: Block images, fonts, styles to speed up loading
     await page.setRequestInterception(true);
@@ -107,7 +98,15 @@ export async function scrapeSubscriptions(profileUrl) {
     console.log(`Loading all subscriptions via pagination...`);
     let hasMore = true;
     let clicks = 0;
-    const maxClicks = 100; // Increased limit for larger profiles
+    const maxClicks = 100;
+
+    // Helper to count potential subscription items (images with 'cover' in alt)
+    const countItems = () => {
+      const images = Array.from(document.querySelectorAll('img'));
+      return images.filter(img => (img.alt || '').toLowerCase().includes('cover')).length;
+    };
+
+    let previousItemCount = await page.evaluate(countItems);
 
     while (hasMore && clicks < maxClicks) {
       hasMore = await page.evaluate(async () => {
@@ -128,21 +127,36 @@ export async function scrapeSubscriptions(profileUrl) {
         clicks++;
         if (clicks % 5 === 0) console.log(`Clicked View More (${clicks})...`);
 
-        // Wait for network idle or DOM change, but with a short timeout
-        // Fast-clicking strategy: 
-        // 1. We clicked. The button usually changes text to "Loading..." or becomes disabled, 
-        //    then new items appear, then button reappears.
-        // 2. We just need to wait a tiny bit for the UI to acknowledge the click.
+        // Wait for new items to appear
         try {
-          await page.waitForFunction(() => {
-            const btn = Array.from(document.querySelectorAll('button')).find(b => (b.textContent || '').trim() === 'View More');
-            return !btn || !btn.disabled;
-          }, { timeout: 4000, polling: 200 });
-        } catch (e) {
-          // checking timeout is fine, just try again
-        }
+          await page.waitForFunction((prevCount) => {
+            const images = Array.from(document.querySelectorAll('img'));
+            const currentCount = images.filter(img => (img.alt || '').toLowerCase().includes('cover')).length;
 
-        // No buffer needed if we trust the button state
+            // Also check if "View More" is gone, meaning we might be done? 
+            // No, just wait for count increase OR button to disappear/change state?
+            // Minimal: wait for count increase.
+            return currentCount > prevCount;
+          }, { timeout: 10000, polling: 500 }, previousItemCount);
+
+          // Update count
+          previousItemCount = await page.evaluate(countItems);
+
+        } catch (e) {
+          console.warn(`Timeout waiting for new items after click ${clicks}. This might be the end or a slow connection.`);
+          // If we timed out, verify if the "View More" button is still there. 
+          // If it IS there, maybe we clicked but it failed? Or maybe there ARE no more items but the button remains?
+          // Let's break the loop to avoid infinite clicking if no new items appear.
+          const isButtonStillThere = await page.evaluate(() => {
+            const buttons = Array.from(document.querySelectorAll('button'));
+            return !!buttons.find(btn => (btn.textContent || '').trim() === 'View More');
+          });
+
+          if (isButtonStillThere) {
+            console.warn("View More button persists but no new items loaded. Stopping.");
+            hasMore = false;
+          }
+        }
       }
     }
 
@@ -212,11 +226,11 @@ export async function scrapeSubscriptions(profileUrl) {
 
     console.log(`Found ${subscriptions.length} subscriptions`);
 
-    await browser.close();
+    await page.close();
     return subscriptions;
 
   } catch (error) {
-    if (browser) await browser.close();
+    if (page) await page.close();
     console.error('Error scraping profile:', error.message);
     throw new Error(`Failed to scrape profile: ${error.message}`);
   }

@@ -56,6 +56,7 @@ async function handleExtract(e) {
         state.isExtracting = true;
         updateUIState('extracting');
 
+        // Start Job
         const response = await fetch('/api/extract', {
             method: 'POST',
             headers: {
@@ -70,35 +71,87 @@ async function handleExtract(e) {
             throw new Error(data.error || 'Extraction failed');
         }
 
-        if (data.warning) {
-            showNotification(data.warning, 'warning');
-        } else {
-            handleExtractionSuccess(data);
-        }
+        const jobId = data.jobId;
+        console.log(`Job queued: ${jobId}`);
+
+        // Poll for completion
+        const poll = setInterval(async () => {
+            try {
+                const jobRes = await fetch(`/api/job/${jobId}`);
+                if (!jobRes.ok) return; // Keep waiting on 404/error occasionally
+
+                const jobData = await jobRes.json();
+
+                if (jobData.state === 'completed') {
+                    clearInterval(poll);
+                    handleExtractionSuccess(jobData);
+                } else if (jobData.state === 'failed') {
+                    clearInterval(poll);
+                    throw new Error(jobData.error || 'Job failed');
+                } else {
+                    // Still running/delayed/active
+                    console.log(`Job status: ${jobData.state}`);
+                }
+            } catch (err) {
+                console.error('Polling error:', err);
+                // Don't restart polling loop on transient error
+                clearInterval(poll);
+                showNotification('Error checking job status', 'error');
+                updateUIState('error');
+                state.isExtracting = false;
+            }
+        }, 1000);
 
     } catch (error) {
         console.error('Extraction error:', error);
         showNotification(error.message, 'error');
         updateUIState('error');
-    } finally {
         state.isExtracting = false;
     }
+    // Note: 'finally' block removed because we need to stay in extracting state during polling
 }
 
 // Handle Successful Extraction
 function handleExtractionSuccess(data) {
     console.log('Extraction success:', data);
-    state.subscriptions = data.subscriptions;
 
-    // Session ID is needed for exports
+    // Stop extraction state
+    state.isExtracting = false;
+
+    // Use the returned session ID
     if (data.sessionId) {
-        state.sessionId = data.sessionId;
-        console.log('Session ID stored:', state.sessionId);
-    }
+        state.subscriptions = data.subscriptions || []; // subscriptions strictly only if session created?
+        // Wait, the job completion returns { state, sessionId, count }
+        // We might need to fetch the session to get subscriptions array if it wasn't returned?
+        // The server code returning subscription count but not array in the simplified view?
+        // Let's re-verify backend
+        // Backend: returns { state, sessionId, count } (NO subscriptions array in result to save bandwidth?)
+        // Let's just fetch the session details to get the full list
 
-    updateUIState('success');
-    displayResults();
-    showNotification(`Successfully extracted ${data.count} subscriptions`, 'success');
+        state.sessionId = data.sessionId;
+        fetchSessionDetails(data.sessionId);
+    } else {
+        updateUIState('error');
+        showNotification('No session ID returned', 'error');
+    }
+}
+
+async function fetchSessionDetails(sessionId) {
+    try {
+        const res = await fetch(`/api/session/${sessionId}`);
+        const sessionData = await res.json();
+
+        if (sessionData.subscriptions) {
+            state.subscriptions = sessionData.subscriptions;
+            updateUIState('success');
+            displayResults();
+            showNotification(`Successfully extracted ${state.subscriptions.length} subscriptions`, 'success');
+        }
+    } catch (err) {
+        console.error('Error fetching session:', err);
+        showNotification('Failed to load results', 'error');
+        updateUIState('error');
+    }
 }
 
 // Display Results

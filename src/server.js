@@ -1,9 +1,48 @@
+import 'dotenv/config';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { scrapeSubscriptions, extractUserId } from './utils/scraper.js';
+import { extractUserId } from './utils/scraper.js';
 import { enrichWithMangaUpdates } from './utils/enricher.js';
 import { exportToMUTxt, exportToPlainTxt } from './exporters/mangaupdates.js';
+import puppeteer from 'puppeteer';
+import { scrapeQueue, initWorker } from './queue.js';
+
+// Global browser instance
+let globalBrowser;
+
+// Initialize worker with browser once launched
+let globalWorker;
+// Modify initBrowser to start worker
+async function initBrowser() {
+  try {
+    globalBrowser = await puppeteer.launch({
+      headless: "new",
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+      ]
+    });
+    console.log("✅ Global browser launched");
+
+    // Initialize Worker
+    globalWorker = initWorker(globalBrowser);
+  } catch (err) {
+    console.error("❌ Failed to launch browser/worker:", err);
+    process.exit(1);
+  }
+}
+
+// Initialize browser on startup
+initBrowser();
+
+// Ensure browser closes on exit
+process.on('SIGINT', async () => {
+  if (globalBrowser) await globalBrowser.close();
+  process.exit();
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,69 +73,80 @@ app.use(express.static(join(__dirname, '../public')));
 
 /**
  * POST /api/extract
- * Extract subscriptions from a WeebCentral profile
+ * Add extraction job to queue
  */
 app.post('/api/extract', async (req, res) => {
   try {
     const { profileUrl } = req.body;
 
-    if (!profileUrl) {
-      return res.status(400).json({
-        success: false,
-        error: 'Profile URL is required'
-      });
-    }
+    if (!profileUrl) return res.status(400).json({ error: 'Profile URL is required' });
+    if (!globalBrowser) return res.status(503).json({ error: 'Server warming up...' });
 
-    console.log(`🚀 Starting extraction for: ${profileUrl}`);
+    console.log(`🚀 Queuing extraction for: ${profileUrl}`);
 
-    // Extract user ID
-    const userId = extractUserId(profileUrl);
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid WeebCentral profile URL'
-      });
-    }
-
-    // Scrape subscriptions
-    const subscriptions = await scrapeSubscriptions(profileUrl);
-
-    if (subscriptions.length === 0) {
-      return res.json({
-        success: true,
-        warning: 'No subscriptions found',
-        subscriptions: [],
-        sessionId: null
-      });
-    }
-
-    // Create session (Simple ID: timestamp-random)
-    const sessionId = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-    sessions.set(sessionId, {
-      subscriptions,
-      userId,
-      timestamp: Date.now(),
-      enrichment: {
-        mangaupdates: { status: 'idle', current: 0, total: subscriptions.length }
-      }
-    });
-
-    console.log(`✅ Extraction complete. Session created: ${sessionId}`);
+    // Add job to queue
+    const job = await scrapeQueue.add('extract', { profileUrl });
 
     res.json({
       success: true,
-      subscriptions,
-      sessionId,
-      count: subscriptions.length
+      jobId: job.id,
+      message: 'Job queued'
     });
 
   } catch (error) {
     console.error('❌ Error in /api/extract:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * GET /api/job/:jobId
+ * Check job status and get result
+ */
+app.get('/api/job/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  const job = await scrapeQueue.getJob(jobId);
+
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found' });
+  }
+
+  const state = await job.getState(); // completed, failed, delayed, etc.
+  const result = job.returnvalue;
+  const error = job.failedReason;
+
+  // If completed, creating session immediately for simplicity
+  if (state === 'completed' && result) {
+    // Create session here so frontend logic remains similar
+    // Ideally we'd move session creation to the worker, but this is a quick refactor
+
+    // Check if session already exists for this job (prevent duplicate sessions on polling)
+    // ... simplistic approach: just return result and let frontend call a "create session" endpoint?
+    // Better: Create session transparently here and return sessionId
+
+    const userId = extractUserId(job.data.profileUrl);
+    // Create session ID based on job ID to be deterministic/idempotent
+    const sessionId = `session-${jobId}`;
+
+    if (!sessions.has(sessionId)) {
+      sessions.set(sessionId, {
+        subscriptions: result,
+        userId,
+        timestamp: Date.now(),
+        enrichment: {
+          mangaupdates: { status: 'idle', current: 0, total: result.length }
+        }
+      });
+    }
+
+    return res.json({
+      state,
+      sessionId,
+      count: result.length
     });
   }
+
+  res.json({ state, error });
 });
 
 /**
