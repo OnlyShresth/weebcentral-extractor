@@ -105,34 +105,51 @@ export async function scrapeSubscriptions(profileUrl) {
 
     // Click "View More" button repeatedly to load all subscriptions
     console.log(`Loading all subscriptions via pagination...`);
-    let clickedViewMore = true;
+    let hasMore = true;
     let clicks = 0;
-    const maxClicks = 50; // Safety limit
+    const maxClicks = 100; // Increased limit for larger profiles
 
-    while (clickedViewMore && clicks < maxClicks) {
-      clickedViewMore = await page.evaluate(() => {
-        // Find button with exact "View More" text
+    while (hasMore && clicks < maxClicks) {
+      hasMore = await page.evaluate(async () => {
         const buttons = Array.from(document.querySelectorAll('button'));
         const viewMoreButton = buttons.find(btn => {
           const text = (btn.textContent || '').trim();
-          return text === 'View More';
+          return text === 'View More' && !btn.disabled && btn.offsetParent !== null;
         });
 
-        if (viewMoreButton && viewMoreButton.offsetParent !== null && !viewMoreButton.disabled) {
+        if (viewMoreButton) {
           viewMoreButton.click();
           return true;
         }
         return false;
       });
 
-      if (clickedViewMore) {
+      if (hasMore) {
         clicks++;
-        console.log(`Clicked View More (${clicks})...`);
-        await page.waitForTimeout(800); // Reduced from 2000ms for speed
+        if (clicks % 5 === 0) console.log(`Clicked View More (${clicks})...`);
+
+        // Wait for network idle or DOM change, but with a short timeout
+        // Fast-clicking strategy: 
+        // 1. We clicked. The button usually changes text to "Loading..." or becomes disabled, 
+        //    then new items appear, then button reappears.
+        // 2. We just need to wait a tiny bit for the UI to acknowledge the click.
+        try {
+          await page.waitForFunction(() => {
+            const btn = Array.from(document.querySelectorAll('button')).find(b => (b.textContent || '').trim() === 'View More');
+            return !btn || !btn.disabled;
+          }, { timeout: 4000, polling: 200 });
+        } catch (e) {
+          // checking timeout is fine, just try again
+        }
+
+        // No buffer needed if we trust the button state
       }
     }
 
     console.log(`Clicked View More ${clicks} times total`);
+
+    // Wait for final render
+    await page.waitForTimeout(1000);
 
     // Verify we have content
     const itemCount = await page.evaluate(() => {
