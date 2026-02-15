@@ -80,6 +80,12 @@ app.post('/api/extract', async (req, res) => {
     const { profileUrl } = req.body;
 
     if (!profileUrl) return res.status(400).json({ error: 'Profile URL is required' });
+
+    const profileRegex = /^https?:\/\/(www\.)?weebcentral\.com\/users\/[A-Za-z0-9]+\/profiles\/?$/;
+    if (!profileRegex.test(profileUrl)) {
+      return res.status(400).json({ error: 'Invalid URL. Expected format: https://weebcentral.com/users/{id}/profiles' });
+    }
+
     if (!globalBrowser) return res.status(503).json({ error: 'Server warming up...' });
 
     console.log(`🚀 Queuing extraction for: ${profileUrl}`);

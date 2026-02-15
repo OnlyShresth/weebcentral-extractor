@@ -47,8 +47,9 @@ async function handleExtract(e) {
         return;
     }
 
-    if (!profileUrl.includes('weebcentral.com/users/')) {
-        showNotification('Invalid WeebCentral profile URL format', 'error');
+    const profileRegex = /^https?:\/\/(www\.)?weebcentral\.com\/users\/[A-Za-z0-9]+\/profiles\/?$/;
+    if (!profileRegex.test(profileUrl)) {
+        showNotification('Invalid URL. Expected format: https://weebcentral.com/users/{id}/profiles', 'error');
         return;
     }
 
