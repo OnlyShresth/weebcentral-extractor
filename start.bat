@@ -1,5 +1,6 @@
 @echo off
 title WeebCentral Extractor
+cd /d "%~dp0"
 cls
 
 echo.
@@ -53,7 +54,7 @@ echo.
 start "" /b cmd /c "timeout /t 3 /nobreak >nul 2>nul && start http://localhost:6767" >nul 2>nul
 
 :: ─── Start the server ───────────────────────────────────────
-node src/server.js
+call node src/server.js
 
 echo.
 echo   Server stopped.
