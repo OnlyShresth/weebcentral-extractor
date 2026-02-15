@@ -1,65 +1,46 @@
 # WeebCentral Subscription Extractor
 
-A web tool that scrapes manga subscription lists from WeebCentral profiles and enriches them with metadata from MangaUpdates.
+Extract your manga subscription list from WeebCentral and export it for MangaUpdates.
 
-## Quick Start
+---
 
-**Windows users:** Double-click `start.bat`. It will check for Node.js, install dependencies, and open the app in your browser.
+## How to Use
 
-If Node.js is not installed, the script will open the download page for you automatically.
+### 1. Download
 
-**Manual start:**
+Click the green **Code** button on this page, then click **Download ZIP**.
 
-```
-npm install
-npm start
-```
+### 2. Extract
 
-The app will be available at `http://localhost:6767`.
+Right-click the downloaded `.zip` file and choose **Extract All**. Open the extracted folder.
 
-## Features
+### 3. Run
 
-- Extracts subscriptions from any public WeebCentral profile URL
-- Matches titles against MangaUpdates using fuzzy and exact search
-- Caches results in MongoDB (falls back to local JSON file)
-- Exports to MangaUpdates link list or plain text
+Double-click **`start.bat`** to launch the app.
 
-## Environment Variables
+- If Node.js is not installed, the script will open the download page for you. Install it, then run `start.bat` again.
+- On first run, dependencies will be installed automatically.
+- The app will open in your browser at `http://localhost:6767`.
 
-| Variable | Required | Description |
-|---|---|---|
-| `MONGODB_URI` | No | MongoDB connection string. Falls back to local JSON cache. |
-| `PORT` | No | Server port. Defaults to `6767`. |
-| `DEBUG` | No | Set to `true` for verbose error output. |
+### 4. Extract Your Subscriptions
 
-## Project Structure
+1. Go to your WeebCentral profile and make sure it is set to **public**.
+2. Copy your profile URL (e.g. `https://weebcentral.com/users/YOUR_ID/profiles`).
+3. Paste it into the app and click **Extract**.
+4. Once extracted, click **Verify with MangaUpdates** to match your titles.
+5. Review any low-confidence matches, then download your export file.
 
-```
-start.bat               - One-click launcher (Windows)
-src/
-  server.js             - Express server and API routes
-  queue.js              - In-memory job queue
-  utils/
-    logger.js           - Centralized logging utility
-    scraper.js          - WeebCentral profile scraper (Puppeteer)
-    enricher.js         - MangaUpdates title matching and enrichment
-    cache.js            - MongoDB / local file cache layer
-  exporters/
-    mangaupdates.js     - Export formatters
-public/
-  index.html            - Web UI
-  app.js                - Frontend logic
-  styles.css            - Styles
-```
+---
 
-## API Endpoints
+## Environment Variables (Optional)
 
-- `POST /api/extract` - Queue a profile scrape job
-- `GET /api/job/:jobId` - Check job status
-- `POST /api/enrich` - Start MangaUpdates enrichment for a session
-- `GET /api/session/:sessionId` - Get session data and enrichment progress
-- `POST /api/update` - Update session (reject bad matches)
-- `GET /api/download/:sessionId/:format` - Download results (`muTxt` or `plainTxt`)
+Create a `.env` file in the project folder to customize:
+
+| Variable | Description |
+|---|---|
+| `MONGODB_URI` | MongoDB connection string for persistent caching. |
+| `PORT` | Server port (default: `6767`). |
+| `DEBUG` | Set to `true` for detailed logs. |
 
 ## License
 
