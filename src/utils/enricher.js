@@ -77,7 +77,7 @@ let lastRequestTime = 0;
 async function fetchBestMangaUpdatesMatch(title) {
     try {
         // 1. Check Cache
-        const cached = getFromCache(title);
+        const cached = await getFromCache(title);
         if (cached) {
             console.log(`⚡ Cache Hit: "${title}" -> "${cached.title}"`);
             return cached;
@@ -132,7 +132,7 @@ async function fetchBestMangaUpdatesMatch(title) {
             if (normalizedResult === normalizedSearch || normalizedHit === normalizedSearch) {
                 console.log(`🎯 Exact Match: "${title}" -> "${muTitle}"`);
                 const formatted = formatResult(result.record, 1.0, 'exact');
-                setToCache(title, formatted);
+                await setToCache(title, formatted);
                 return formatted;
             }
 
@@ -166,7 +166,7 @@ async function fetchBestMangaUpdatesMatch(title) {
         console.log(`✅ Match: "${title}" -> "${bestMatch.title}" (${highestScore.toFixed(2)})`);
 
         const finalResult = formatResult(bestMatch, highestScore, 'fuzzy');
-        setToCache(title, finalResult);
+        await setToCache(title, finalResult);
         return finalResult;
 
     } catch (error) {
