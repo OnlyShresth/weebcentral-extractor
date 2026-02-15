@@ -15,7 +15,7 @@ npm install
 npm start
 ```
 
-The app will be available at `http://localhost:3000`.
+The app will be available at `http://localhost:6767`.
 
 ## Features
 
@@ -29,7 +29,7 @@ The app will be available at `http://localhost:3000`.
 | Variable | Required | Description |
 |---|---|---|
 | `MONGODB_URI` | No | MongoDB connection string. Falls back to local JSON cache. |
-| `PORT` | No | Server port. Defaults to `3000`. |
+| `PORT` | No | Server port. Defaults to `6767`. |
 | `DEBUG` | No | Set to `true` for verbose error output. |
 
 ## Project Structure

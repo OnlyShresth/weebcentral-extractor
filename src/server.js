@@ -49,7 +49,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6767;
 
 // In-memory storage for sessions
 // Map<sessionId, { subscriptions: Array, userId: string, timestamp: Date }>

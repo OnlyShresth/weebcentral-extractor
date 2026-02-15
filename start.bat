@@ -50,7 +50,7 @@ echo      Press Ctrl+C to stop.
 echo.
 
 :: ─── Open browser after a short delay ───────────────────────
-start "" /b cmd /c "timeout /t 3 /nobreak >nul 2>nul && start http://localhost:3000" >nul 2>nul
+start "" /b cmd /c "timeout /t 3 /nobreak >nul 2>nul && start http://localhost:6767" >nul 2>nul
 
 :: ─── Start the server ───────────────────────────────────────
 node src/server.js 2>nul
