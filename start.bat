@@ -53,6 +53,10 @@ echo.
 start "" /b cmd /c "timeout /t 3 /nobreak >nul 2>nul && start http://localhost:6767" >nul 2>nul
 
 :: ─── Start the server ───────────────────────────────────────
-node src/server.js 2>nul
+node src/server.js
 
+echo.
+echo   Server stopped.
+echo   Press any key to close...
+pause >nul
 exit /b 0
