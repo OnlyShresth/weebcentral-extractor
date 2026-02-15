@@ -1,103 +1,91 @@
 /**
- * Centralized Logger Utility
- * Clean, structured console output with timestamps and categories.
+ * Logger Utility
+ * Clean, minimal terminal output.
+ *
+ * User-facing logs use simple markers:
+ *   >  action / step in progress
+ *   +  success
+ *   !  warning
+ *   x  error
+ *
+ * Internal/debug logs are hidden unless DEBUG=true.
  */
 
-const LABELS = {
-    INFO: '[INFO]   ',
-    OK: '[OK]     ',
-    WARN: '[WARN]   ',
-    ERROR: '[ERROR]  ',
-    DEBUG: '[DEBUG]  ',
-    CACHE: '[CACHE]  ',
-    MATCH: '[MATCH]  ',
-    SCRAPE: '[SCRAPE] ',
-    QUEUE: '[QUEUE]  ',
-    SERVER: '[SERVER] ',
-};
+const isDebug = () => process.env.DEBUG === 'true';
 
-function timestamp() {
-    return new Date().toLocaleTimeString('en-US', { hour12: false });
-}
-
-function fmt(label, message) {
-    return `${timestamp()}  ${label} ${message}`;
-}
-
-// ─── Box Drawing Helpers ────────────────────────────────────────
+// ─── Box Drawing ────────────────────────────────────────────
 
 /**
- * Print a boxed banner with optional subtitle lines.
- * @param {string} title - Main title
- * @param {string[]} [lines] - Extra lines beneath the title
- * @param {number} [width] - Box width (default 56)
+ * Print a boxed banner.
  */
-export function banner(title, lines = [], width = 56) {
-    const pad = (str, w) => {
-        const padding = w - str.length;
-        const left = Math.floor(padding / 2);
-        const right = padding - left;
-        return ' '.repeat(left) + str + ' '.repeat(right);
+export function banner(title, subtitle = '') {
+    const lines = [title];
+    if (subtitle) lines.push(subtitle);
+
+    const longest = Math.max(...lines.map(l => l.length));
+    const inner = longest + 4; // 2 padding each side
+
+    const center = (str) => {
+        const space = inner - str.length;
+        const left = Math.floor(space / 2);
+        return ' '.repeat(left) + str + ' '.repeat(space - left);
     };
-    const inner = width - 2;
 
     console.log('');
-    console.log(`+${'-'.repeat(inner)}+`);
-    console.log(`|${pad(title, inner)}|`);
-    if (lines.length > 0) {
-        console.log(`|${' '.repeat(inner)}|`);
-        for (const line of lines) {
-            console.log(`|${pad(line, inner)}|`);
-        }
-    }
-    console.log(`+${'-'.repeat(inner)}+`);
+    console.log(`  ┌${'─'.repeat(inner)}┐`);
+    console.log(`  │${' '.repeat(inner)}│`);
+    lines.forEach(line => console.log(`  │${center(line)}│`));
+    console.log(`  │${' '.repeat(inner)}│`);
+    console.log(`  └${'─'.repeat(inner)}┘`);
     console.log('');
 }
 
 /**
- * Print a labelled divider line.
- * @param {string} [label] - Optional label
- * @param {number} [width] - Total width (default 56)
+ * Print a section divider.
  */
-export function divider(label = '', width = 56) {
-    if (!label) {
-        console.log('-'.repeat(width));
-        return;
-    }
-    const side = Math.max(2, Math.floor((width - label.length - 2) / 2));
-    console.log(`${'-'.repeat(side)} ${label} ${'-'.repeat(width - side - label.length - 2)}`);
-}
-
-/**
- * Print key-value pairs in a clean aligned table.
- * @param {Record<string, string>} data
- */
-export function table(data) {
-    const maxKey = Math.max(...Object.keys(data).map(k => k.length));
-    for (const [key, value] of Object.entries(data)) {
-        console.log(`  ${key.padEnd(maxKey)}  :  ${value}`);
+export function divider(label = '') {
+    if (label) {
+        console.log(`\n  ── ${label} ${'─'.repeat(Math.max(2, 44 - label.length))}\n`);
+    } else {
+        console.log('');
     }
 }
 
-// ─── Standard Logging ───────────────────────────────────────────
+// ─── User-Facing Logs ───────────────────────────────────────
 
 const log = {
-    info: (msg, ...args) => console.log(fmt(LABELS.INFO, msg), ...args),
-    ok: (msg, ...args) => console.log(fmt(LABELS.OK, msg), ...args),
-    warn: (msg, ...args) => console.warn(fmt(LABELS.WARN, msg), ...args),
-    error: (msg, ...args) => console.error(fmt(LABELS.ERROR, msg), ...args),
-    debug: (msg, ...args) => {
-        if (process.env.DEBUG === 'true') {
-            console.log(fmt(LABELS.DEBUG, msg), ...args);
-        }
-    },
+    /** Action / step in progress */
+    step: (msg) => console.log(`  >  ${msg}`),
 
-    // Category-specific helpers
-    cache: (msg, ...args) => console.log(fmt(LABELS.CACHE, msg), ...args),
-    match: (msg, ...args) => console.log(fmt(LABELS.MATCH, msg), ...args),
-    scrape: (msg, ...args) => console.log(fmt(LABELS.SCRAPE, msg), ...args),
-    queue: (msg, ...args) => console.log(fmt(LABELS.QUEUE, msg), ...args),
-    server: (msg, ...args) => console.log(fmt(LABELS.SERVER, msg), ...args),
+    /** Success */
+    ok: (msg) => console.log(`  +  ${msg}`),
+
+    /** Warning */
+    warn: (msg) => console.warn(`  !  ${msg}`),
+
+    /** Error */
+    error: (msg) => console.error(`  x  ${msg}`),
+
+    // ─── Internal / Debug Only ──────────────────────────────
+    // These only print when DEBUG=true
+
+    /** Detailed internal logging */
+    debug: (msg) => { if (isDebug()) console.log(`     [debug] ${msg}`); },
+
+    /** Internal cache operations */
+    cache: (msg) => { if (isDebug()) console.log(`     [cache] ${msg}`); },
+
+    /** Internal match details */
+    match: (msg) => { if (isDebug()) console.log(`     [match] ${msg}`); },
+
+    /** Internal scrape details */
+    scrape: (msg) => { if (isDebug()) console.log(`     [scrape] ${msg}`); },
+
+    /** Internal queue details */
+    queue: (msg) => { if (isDebug()) console.log(`     [queue] ${msg}`); },
+
+    /** Internal server details */
+    server: (msg) => { if (isDebug()) console.log(`     [server] ${msg}`); },
 };
 
 export default log;

@@ -1,7 +1,7 @@
 {
   "name": "weebcentral-extractor",
   "version": "1.0.0",
-  "description": "Extract subscriptions from WeebCentral profiles and export to MAL/MangaDex",
+  "description": "Extract subscriptions from WeebCentral profiles and export to MangaUpdates format",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -11,18 +11,14 @@
   "keywords": [
     "weebcentral",
     "manga",
-    "anime",
     "scraper"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bullmq": "^4.18.3",
     "dotenv": "^17.3.1",
     "express": "^4.22.1",
-    "ioredis": "^5.9.3",
     "mongodb": "^6.21.0",
-    "puppeteer": "^21.11.0",
-    "redis": "^5.10.0"
+    "puppeteer": "^21.11.0"
   }
 }

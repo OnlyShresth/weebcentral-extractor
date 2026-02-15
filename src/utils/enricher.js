@@ -194,8 +194,8 @@ function formatResult(record, score = 0, matchType = 'fuzzy') {
  * Uses concurrency pool for faster processing
  */
 export async function enrichWithMangaUpdates(subscriptions, onProgress) {
-    divider('ENRICHMENT');
-    log.info(`Enriching ${subscriptions.length} items with MangaUpdates data...`);
+    divider('Enrichment');
+    log.step(`Verifying ${subscriptions.length} titles against MangaUpdates...`);
     const enriched = [...subscriptions];
     let processed = 0;
 
@@ -233,6 +233,6 @@ export async function enrichWithMangaUpdates(subscriptions, onProgress) {
         await Promise.all(chunk);
     }
 
-    divider('ENRICHMENT COMPLETE');
+    log.ok(`Enrichment complete (${enriched.length} titles processed)`);
     return enriched;
 }

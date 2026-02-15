@@ -1,114 +1,87 @@
-import { Queue, Worker } from 'bullmq';
-import IORedis from 'ioredis';
 import { scrapeSubscriptions } from './utils/scraper.js';
 import log from './utils/logger.js';
 
-// Redis Connection
-const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-
-// Check if Redis is available
-const USE_REDIS = process.env.USE_REDIS === 'true';
-
-log.queue(`Redis queue is ${USE_REDIS ? 'ENABLED' : 'DISABLED (in-memory fallback)'}`);
-
-let scrapeQueue;
-let worker;
-
-/* 
- * MOCK QUEUE IMPLEMENTATION (In-Memory)
- * Mimics BullMQ API for 'add' and 'getJob'
+/**
+ * Lightweight in-memory job queue.
+ * Mimics a minimal subset of the BullMQ API (.add, .getJob)
+ * so the server can queue scrapes and poll for completion.
  */
-class MockQueue {
+class JobQueue {
     constructor() {
         this.jobs = new Map();
         this.idCounter = 1;
         this.processor = null;
     }
 
+    /**
+     * Register the processing function for this queue.
+     */
+    process(fn) {
+        this.processor = fn;
+    }
+
+    /**
+     * Add a job. Processing starts immediately in the background.
+     */
     async add(name, data) {
-        const id = this.idCounter++;
+        const id = String(this.idCounter++);
         const job = {
-            id: String(id),
+            id,
             data,
             returnvalue: null,
             failedReason: null,
-            state: 'waiting',
-            timestamp: Date.now(),
-            getState: async () => job.state
+            _state: 'waiting',
+            getState: async function () { return this._state; }
         };
-        this.jobs.set(job.id, job);
+        this.jobs.set(id, job);
 
-        // Trigger processing immediately (next tick)
-        this.processJob(job);
+        // Process asynchronously (don't block the caller)
+        this._run(job);
 
         return job;
     }
 
+    /**
+     * Retrieve a job by ID.
+     */
     async getJob(id) {
-        return this.jobs.get(String(id));
+        return this.jobs.get(String(id)) || null;
     }
 
-    async processJob(job) {
+    /**
+     * @private Execute the processor for a single job.
+     */
+    async _run(job) {
         if (!this.processor) return;
-
-        job.state = 'active';
+        job._state = 'active';
         try {
-            const result = await this.processor(job);
-            job.returnvalue = result;
-            job.state = 'completed';
+            job.returnvalue = await this.processor(job);
+            job._state = 'completed';
+            log.ok(`Job ${job.id} completed`);
         } catch (err) {
-            log.error(`Job ${job.id} failed: ${err.message}`);
             job.failedReason = err.message;
-            job.state = 'failed';
+            job._state = 'failed';
+            log.error(`Job ${job.id} failed: ${err.message}`);
         }
     }
-
-    // Mimic Worker initialization
-    process(callback) {
-        this.processor = callback;
-    }
 }
 
+// ─── Create and export the queue ────────────────────────────────
 
-if (USE_REDIS) {
-    // --- REAL REDIS IMPLEMENTATION ---
-    const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
-    scrapeQueue = new Queue('weebcentral-scrape', { connection });
-} else {
-    // --- IN-MEMORY IMPLEMENTATION ---
-    scrapeQueue = new MockQueue();
-}
+const scrapeQueue = new JobQueue();
 
-
-// Worker Setup
+/**
+ * Initialize the worker by attaching the scrape processor.
+ * @param {object} browser - Shared Puppeteer browser instance
+ */
 export function initWorker(browser) {
-    const processor = async job => {
+    scrapeQueue.process(async (job) => {
         const { profileUrl } = job.data;
         log.queue(`Job ${job.id}: Scraping ${profileUrl}`);
-        const result = await scrapeSubscriptions(profileUrl, browser);
-        return result;
-    };
-
-    if (USE_REDIS) {
-        // Real BullMQ Worker
-        const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
-        worker = new Worker('weebcentral-scrape', processor, { connection, concurrency: 2 });
-
-        worker.on('completed', job => {
-            log.ok(`Job ${job.id} completed`);
-        });
-        worker.on('failed', (job, err) => {
-            log.error(`Job ${job.id} failed: ${err.message}`);
-        });
-    } else {
-        // Mock Worker (Just attaches processor to queue)
-        scrapeQueue.process(processor);
-        log.queue('In-memory scrape worker initialized');
-        return scrapeQueue;
-    }
-
-    log.queue('Redis scrape worker initialized');
-    return worker;
+        return await scrapeSubscriptions(profileUrl, browser);
+    });
+    log.queue('Scrape worker initialized');
+    return scrapeQueue;
 }
 
 export { scrapeQueue };

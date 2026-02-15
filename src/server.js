@@ -7,7 +7,7 @@ import { enrichWithMangaUpdates } from './utils/enricher.js';
 import { exportToMUTxt, exportToPlainTxt } from './exporters/mangaupdates.js';
 import puppeteer from 'puppeteer';
 import { scrapeQueue, initWorker } from './queue.js';
-import log, { banner, table } from './utils/logger.js';
+import log, { banner } from './utils/logger.js';
 
 // Global browser instance
 let globalBrowser;
@@ -26,7 +26,7 @@ async function initBrowser() {
         '--disable-gpu'
       ]
     });
-    log.ok('Browser instance launched');
+    log.debug('Browser instance launched');
 
     // Initialize Worker
     globalWorker = initWorker(globalBrowser);
@@ -184,7 +184,7 @@ app.post('/api/enrich', (req, res) => {
       session.enrichment.mangaupdates.current = session.subscriptions.length;
     })
     .catch(err => {
-      log.error(`Enrichment error: ${err.message}`);
+      log.error(`Enrichment failed: ${err.message}`);
       session.enrichment.mangaupdates.status = 'error';
     });
 
@@ -196,12 +196,10 @@ app.post('/api/enrich', (req, res) => {
  * Update session subscriptions (e.g., after manual review)
  */
 app.post('/api/update', (req, res) => {
-  const { sessionId, updates } = req.body;
+  const { sessionId, rejectedIndices } = req.body;
 
   const session = sessions.get(sessionId);
   if (!session) return res.status(404).json({ error: 'Session not found' });
-
-  const { rejectedIndices } = req.body; // Array of numbers
 
   if (Array.isArray(rejectedIndices)) {
     rejectedIndices.forEach(index => {
@@ -295,9 +293,7 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  banner('WEEBCENTRAL SUBSCRIPTION EXTRACTOR', [
-    `Server running at: http://localhost:${PORT}`
-  ]);
+  banner('WEEBCENTRAL SUBSCRIPTION EXTRACTOR', `Server running at http://localhost:${PORT}`);
 });
 
 export default app;

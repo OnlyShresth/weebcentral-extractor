@@ -37,13 +37,13 @@ async function initCache() {
             const db = dbClient.db(); // Use database from URI
             dbCollection = db.collection(COLLECTION_NAME);
             useMongo = true;
-            log.ok('Connected to MongoDB cache');
+            log.debug('Connected to MongoDB cache');
             return;
         } catch (err) {
             log.warn(`MongoDB connection failed, falling back to file cache: ${err.message}`);
         }
     } else {
-        log.info('No MONGODB_URI found, using local file cache.');
+        log.debug('No MONGODB_URI found, using local file cache.');
     }
 
     // Fallback to File Cache

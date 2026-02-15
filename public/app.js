@@ -306,50 +306,37 @@ async function startEnrichment(target, finalFormat) {
 
         // Poll progress
         const poll = setInterval(async () => {
-            const res = await fetch(`/api/session/${state.sessionId}`);
-            const data = await res.json();
+            try {
+                const res = await fetch(`/api/session/${state.sessionId}`);
+                const data = await res.json();
 
-            if (!data.enrichment || !data.enrichment[target]) {
-                return;
-            }
+                if (!data.enrichment || !data.enrichment[target]) {
+                    return;
+                }
 
-            const status = data.enrichment[target];
+                const status = data.enrichment[target];
 
-            if (status.status === 'complete') {
                 if (status.status === 'complete') {
                     clearInterval(poll);
                     modal.classList.add('hidden');
-
-                    // Check for low confidence matches
-                    // Fetch the full list to check scores
-                    const sessionRes = await fetch(`/api/session/${state.sessionId}`);
-                    const sessionData = await sessionRes.json();
-
-                    // Identify items that need review
-                    // Config: Review if score < 0.9 and type != 'exact' (and has a match)
-                    const needsReview = sessionData.enrichment.mangaupdates.current > 0 ? // just to be safe it's populated
-                        sessionData.enrichment.mangaupdates.items : [];
-                    // Wait, the API doesn't return items in the status object.
-                    // We need to fetch the subscriptions from /api/extract? No, that was initial.
-                    // We need an endpoint to get the items? 
-                    // Ah, /api/extract returned them initially. 
-                    // We can just rely on the FACT that we need to RE-FETCH the finalized list?
-                    // Actually, let's add a `subscriptions` field to the /api/session response
-
                     checkReviewNeeded();
                 }
-            }
-            else if (status.status === 'error') {
+                else if (status.status === 'error') {
+                    clearInterval(poll);
+                    modal.classList.add('hidden');
+                    showNotification('Verification failed. Please try again.', 'error');
+                }
+                else {
+                    const percent = (status.current / status.total) * 100;
+                    fill.style.width = `${percent}%`;
+                    count.textContent = `Processing ${status.current}/${status.total}`;
+                    eta.textContent = 'Please wait...';
+                }
+            } catch (err) {
+                console.error('Enrichment poll error:', err);
                 clearInterval(poll);
                 modal.classList.add('hidden');
-                showNotification('Verification failed. Please try again.', 'error');
-            }
-            else {
-                // Update UI
-                const percent = (status.current / status.total) * 100;
-                fill.style.width = `${percent}%`;
-                count.textContent = `Processing ${status.current}/${status.total}`;
-                eta.textContent = 'Please wait...';
+                showNotification('Lost connection to server.', 'error');
             }
         }, 1000);
 
@@ -361,8 +348,8 @@ async function startEnrichment(target, finalFormat) {
 }
 
 // Update UI State
-function updateUIState(state) {
-    switch (state) {
+function updateUIState(uiState) {
+    switch (uiState) {
         case 'extracting':
             elements.extractBtn.disabled = true;
             elements.extractBtn.textContent = 'Extracting...';

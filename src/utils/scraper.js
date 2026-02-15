@@ -12,7 +12,7 @@ export async function scrapeSubscriptions(profileUrl, browser) {
   let page;
 
   try {
-    log.scrape(`Starting scrape for: ${profileUrl}`);
+    log.scrape(`Scrape target: ${profileUrl}`);
 
     // Create new page from shared browser
     page = await browser.newPage();
@@ -30,18 +30,18 @@ export async function scrapeSubscriptions(profileUrl, browser) {
     // Set user agent
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-    log.scrape('Navigating to profile...');
+    log.step('Navigating to profile...');
     try {
       // Optimized wait condition: domcontentloaded is faster than networkidle2
       await page.goto(profileUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     } catch (error) {
-      log.warn('Page load issue, retrying...');
+      log.scrape('Page load issue, retrying...');
       await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
     }
     // Wait for initial load
     await page.waitForTimeout(1000);
 
-    log.scrape('Looking for Subscriptions tab...');
+    log.step('Finding subscriptions...');
 
     // Click the Subscriptions tab
     const subscriptionsTabClicked = await page.evaluate(() => {
@@ -63,7 +63,7 @@ export async function scrapeSubscriptions(profileUrl, browser) {
     });
 
     if (!subscriptionsTabClicked) {
-      log.scrape('First attempt failed, trying alternative selector...');
+      log.scrape('Primary selector missed, trying fallback...');
 
       // Alternative: try clicking by looking for any element with "Subscriptions ("
       await page.evaluate(() => {
@@ -84,14 +84,14 @@ export async function scrapeSubscriptions(profileUrl, browser) {
 
 
     if (subscriptionsTabClicked) {
-      log.scrape('Clicked Subscriptions tab, waiting for content...');
+      log.scrape('Subscriptions tab clicked, waiting for content...');
       await page.waitForTimeout(3000);
     } else {
       log.warn('Could not find Subscriptions tab');
     }
 
     // Click "View More" button repeatedly to load all subscriptions
-    log.scrape('Loading all subscriptions via pagination...');
+    log.step('Loading all pages...');
     let hasMore = true;
     let clicks = 0;
     const maxClicks = 100;
@@ -121,7 +121,7 @@ export async function scrapeSubscriptions(profileUrl, browser) {
 
       if (hasMore) {
         clicks++;
-        if (clicks % 5 === 0) log.scrape(`Pagination progress: ${clicks} pages loaded`);
+        if (clicks % 5 === 0) log.scrape(`Loaded ${clicks} pages so far`);
 
         // Wait for new items to appear
         try {
@@ -135,21 +135,21 @@ export async function scrapeSubscriptions(profileUrl, browser) {
           previousItemCount = await page.evaluate(countItems);
 
         } catch (e) {
-          log.warn(`Timeout after click ${clicks}. Possible end of list.`);
+          log.scrape(`Timeout after click ${clicks}, possibly end of list`);
           const isButtonStillThere = await page.evaluate(() => {
             const buttons = Array.from(document.querySelectorAll('button'));
             return !!buttons.find(btn => (btn.textContent || '').trim() === 'View More');
           });
 
           if (isButtonStillThere) {
-            log.warn('View More button persists but no new items loaded. Stopping.');
+            log.scrape('View More persists but no new items. Stopping.');
             hasMore = false;
           }
         }
       }
     }
 
-    log.scrape(`Pagination complete. ${clicks} pages loaded.`);
+    log.scrape(`Pagination done: ${clicks} pages`);
 
     // Wait for final render
     await page.waitForTimeout(1000);
@@ -158,9 +158,8 @@ export async function scrapeSubscriptions(profileUrl, browser) {
     const itemCount = await page.evaluate(() => {
       return document.querySelectorAll('img').length;
     });
-    log.scrape(`Total images found on page: ${itemCount}`);
-
-    log.scrape('Extracting subscription data...');
+    log.scrape(`Total images on page: ${itemCount}`);
+    log.step('Extracting subscription data...');
 
     // Extract all subscriptions from the page
     const subscriptions = await page.evaluate(() => {

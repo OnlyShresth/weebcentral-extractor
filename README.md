@@ -23,15 +23,12 @@ The app will be available at `http://localhost:3000`.
 - Matches titles against MangaUpdates using fuzzy and exact search
 - Caches results in MongoDB (falls back to local JSON file)
 - Exports to MangaUpdates link list or plain text
-- Job queue system with Redis support (optional, defaults to in-memory)
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
 | `MONGODB_URI` | No | MongoDB connection string. Falls back to local JSON cache. |
-| `USE_REDIS` | No | Set to `true` to use Redis/BullMQ for the job queue. |
-| `REDIS_URL` | No | Redis connection URL. Defaults to `redis://127.0.0.1:6379`. |
 | `PORT` | No | Server port. Defaults to `3000`. |
 | `DEBUG` | No | Set to `true` for verbose error output. |
 
@@ -41,14 +38,12 @@ The app will be available at `http://localhost:3000`.
 start.bat               - One-click launcher (Windows)
 src/
   server.js             - Express server and API routes
-  queue.js              - Job queue (BullMQ or in-memory fallback)
+  queue.js              - In-memory job queue
   utils/
     logger.js           - Centralized logging utility
     scraper.js          - WeebCentral profile scraper (Puppeteer)
     enricher.js         - MangaUpdates title matching and enrichment
     cache.js            - MongoDB / local file cache layer
-    errorHandler.js     - Error classes and middleware
-    fileGenerator.js    - Export file generation
   exporters/
     mangaupdates.js     - Export formatters
 public/
