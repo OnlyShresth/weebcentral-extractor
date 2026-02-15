@@ -107,6 +107,6 @@ export function validateSubscriptions(subscriptions) {
  * @returns {boolean} Whether the file type is valid
  */
 export function validateFileType(fileType) {
-    const validTypes = ['anilistXml', 'muCsv', 'muJson'];
+    const validTypes = ['anilistXml', 'muCsv'];
     return validTypes.includes(fileType);
 }

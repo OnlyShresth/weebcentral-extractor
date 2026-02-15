@@ -105,11 +105,138 @@
                         <span class="stat-label">Total Found</span>
                         <span class="stat-value" id="totalCount">0</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Export Formats</span>
-                        <span class="stat-value">4</span>
+                    <!-- Export Formats Removed -->
+                </div>
+
+                <!-- Export Options -->
+                <div class="export-section">
+                    <h2 class="section-title">Download Exports</h2>
+
+                    <!-- Step 1: Verification -->
+                    <div class="export-group" id="step1Group">
+                        <h3 class="export-title">Step 1: Smart Verification</h3>
+                        <button class="btn-export primary" data-file="enrichment">
+                            <span>Verify with MangaUpdates</span>
+                            <span class="label-secondary">Recommended for Comix</span>
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Exports -->
+                    <div class="export-group hidden" id="step2Group">
+                        <h3 class="export-title">Step 2: Download</h3>
+                        <button class="btn-export" data-file="muTxt">
+                            <span>MangaUpdates Links</span>
+                            <span class="label-secondary">.txt file</span>
+                        </button>
+                        <button class="btn-export" data-file="plainTxt">
+                            <span>Simple List</span>
+                            <span class="label-secondary">Titles Only</span>
+                        </button>
                     </div>
                 </div>
+
+                <!-- Export Guides -->
+                <section class="guides-section">
+                    <h3 class="section-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Import Guides
+                    </h3>
+
+                    <div class="guides-grid">
+                        <!-- Comix Guide -->
+                        <div class="guide-card">
+                            <div class="guide-header comix">
+                                <div>
+                                    <h4>Comix</h4>
+                                    <span class="guide-tag">Base Import</span>
+                                </div>
+                            </div>
+                            <ol class="guide-steps">
+                                <li>Download the <strong>MangaUpdates Links</strong> file (.txt) above.</li>
+                                <li>Go to <a href="https://comix.to/user/bookmarks?tab=import" target="_blank"
+                                        class="guide-link">
+                                        Comix Import
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>.</li>
+                                <li>Select the <strong>File</strong> checkbox.</li>
+                                <li>Upload the <code>.txt</code> file.</li>
+                                <li>Check <strong>Merge</strong> and click Import.</li>
+                            </ol>
+                        </div>
+
+                        <!-- MAL Guide -->
+                        <div class="guide-card">
+                            <div class="guide-header mal">
+                                <div>
+                                    <h4>MyAnimeList</h4>
+                                    <span class="guide-tag">Via Comix</span>
+                                </div>
+                            </div>
+                            <ol class="guide-steps">
+                                <li><strong>Pre-requisite:</strong> Import to Comix first (see left).</li>
+                                <li>Go to <a href="https://comix.to/user/bookmarks?tab=export" target="_blank"
+                                        class="guide-link">
+                                        Comix Export
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path
+                                                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6">
+                                            </path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>.</li>
+                                <li>Select <strong>MAL XML</strong> and download.</li>
+                                <li>Go to <a href="https://myanimelist.net/import.php" target="_blank"
+                                        class="guide-link">
+                                        MAL Import
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>.</li>
+                                <li>Select <strong>MyAnimeList Import</strong>.</li>
+                                <li>Upload the XML file.</li>
+                            </ol>
+                        </div>
+
+                        <!-- Mangafire Guide -->
+                        <div class="guide-card">
+                            <div class="guide-header mangafire">
+                                <div>
+                                    <h4>Mangafire</h4>
+                                    <span class="guide-tag">Via MAL XML</span>
+                                </div>
+                            </div>
+                            <ol class="guide-steps">
+                                <li><strong>Pre-requisite:</strong> Get MAL XML (see middle).</li>
+                                <li>Go to <a href="https://mangafire.to/user/list/import" target="_blank"
+                                        class="guide-link">
+                                        Mangafire Import
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>.</li>
+                                <li>Select <strong>MyAnimeList</strong>.</li>
+                                <li>Upload the XML file.</li>
+                                <li>Click Import.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Subscriptions Grid -->
                 <div class="subscriptions-section">
@@ -121,8 +248,47 @@
             </section>
         </main>
 
+        <!-- Enrichment Modal -->
+        <div id="enrichModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Smart Matching...</h3>
+                <p class="modal-description">Finding best matches on MangaUpdates.</p>
 
+                <div class="progress-bar">
+                    <div class="progress-fill" id="enrichmentFill"></div>
+                </div>
 
+                <div class="modal-stats">
+                    <span id="enrichmentCount">Processing 0/0</span>
+                    <span id="enrichmentEta">Calculating time...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Modal -->
+        <div id="reviewModal" class="modal-overlay hidden">
+            <div class="modal-content review-modal-content">
+                <h3 class="modal-title">Review Matches</h3>
+                <p class="modal-description">Some titles had low confidence matches. Please select which ones to keep.
+                </p>
+
+                <div class="review-header">
+                    <div>Keep</div>
+                    <div>Original Title</div>
+                    <div></div>
+                    <div>Matched Result</div>
+                    <div style="text-align:right">Score</div>
+                </div>
+                <div class="review-list" id="reviewList">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-primary" id="confirmReviewBtn">Confirm & Continue</button>
+                    <p class="hint-text">Unchecked items will be exported as plain text (failed).</p>
+                </div>
+            </div>
+        </div>
         <!-- Footer -->
         <footer class="footer">
             <p>WeebCentral Extractor &copy; 2026</p>

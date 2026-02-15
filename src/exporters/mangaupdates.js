@@ -1,45 +1,47 @@
 /**
- * Export subscriptions to CSV format for MangaUpdates manual use
- * Columns: ID, Title, Link, Original Title
- * @param {Array} subscriptions 
- * @returns {string} CSV content
+ * Convert numeric ID to Base36 (MangaUpdates format)
+ * @param {number} id 
+ * @returns {string}
  */
-export function exportToMUCsv(subscriptions) {
-    const header = ['ID', 'Title', 'Link', 'Original Title', 'Year', 'Type'];
-    const rows = subscriptions.map(sub => {
-        // Handle fields that might contain commas
-        const safeTitle = `"${(sub.mu_title || sub.title).replace(/"/g, '""')}"`;
-        const safeOriginal = `"${sub.title.replace(/"/g, '""')}"`;
-
-        return [
-            sub.mu_id || '',
-            safeTitle,
-            sub.mu_url || '',
-            safeOriginal,
-            sub.mu_year || '',
-            sub.mu_type || ''
-        ].join(',');
-    });
-
-    return [header.join(','), ...rows].join('\n');
+function toBase36(id) {
+    return id.toString(36);
 }
 
 /**
- * Export subscriptions to JSON format for MangaUpdates/Bot use
- * @param {Array} subscriptions 
- * @returns {string} JSON string
+ * Create a slug from title
+ * @param {string} title 
+ * @returns {string}
  */
-export function exportToMUJson(subscriptions) {
-    const data = subscriptions.map(sub => ({
-        id: sub.mu_id || null,
-        title: sub.mu_title || sub.title,
-        url: sub.mu_url || null,
-        original_title: sub.title,
-        year: sub.mu_year || null,
-        type: sub.mu_type || null,
-        weebcentral_link: sub.link || null,
-        image_url: sub.imageUrl || null
-    }));
-
-    return JSON.stringify(data, null, 2);
+function toSlug(title) {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
 }
+
+/**
+ * Export as MangaUpdates Links (.txt)
+ * Format: https://www.mangaupdates.com/series/{base36id}/{slug}
+ */
+export function exportToMUTxt(subscriptions) {
+    return subscriptions
+        .filter(sub => sub.mu_id) // Only matched items
+        .map(sub => {
+            const base36Id = toBase36(sub.mu_id);
+            const slug = toSlug(sub.mu_title || sub.title);
+            return `https://www.mangaupdates.com/series/${base36Id}/${slug}`;
+        })
+        .join('\n');
+}
+
+/**
+ * Export as Plain Text List (.txt)
+ * Format: Title
+ */
+export function exportToPlainTxt(subscriptions) {
+    return subscriptions
+        .map(sub => sub.mu_title || sub.title)
+        .join('\n');
+}
+
+// End of file

@@ -1,0 +1,952 @@
+{
+  "pandora hearts": {
+    "id": 8690952745,
+    "title": "Pandora Hearts",
+    "url": "https://www.mangaupdates.com/series/3zqda21/pandora-hearts",
+    "year": "2006",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i216602.png",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "hajime no ippo": {
+    "id": 20546760497,
+    "title": "Hajime no Ippo",
+    "url": "https://www.mangaupdates.com/series/9ft0dv5/hajime-no-ippo",
+    "year": "1989",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i512424.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "maga tsuki": {
+    "id": 66115893907,
+    "title": "Maga Tsuki",
+    "url": "https://www.mangaupdates.com/series/udfp28j/maga-tsuki",
+    "year": "2011",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i497707.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "real": {
+    "id": 24661607542,
+    "title": "Real",
+    "url": "https://www.mangaupdates.com/series/bbuvu5y/real",
+    "year": "1999",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i505954.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tetsugaku letra": {
+    "id": 11906547838,
+    "title": "Tetsugaku Letra",
+    "url": "https://www.mangaupdates.com/series/5gwun3y/tetsugaku-letra",
+    "year": "2011",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i216213.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "no matter how i look at it, it's you guys' fault i'm not popular!": {
+    "id": 65415223670,
+    "title": "Watashi ga Motenai no wa Dou Kangaetemo Omaera ga Warui!",
+    "url": "https://www.mangaupdates.com/series/u1uj9me/watashi-ga-motenai-no-wa-dou-kangaetemo-omaera-ga-warui",
+    "year": "2011",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i493475.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "lookism": {
+    "id": 1837085795,
+    "title": "Lookism",
+    "url": "https://www.mangaupdates.com/series/0udr4gz/lookism",
+    "year": "2014",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i453740.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "shiori experience - jimi na watashi to hen na oji-san": {
+    "id": 28221355901,
+    "title": "Shiori Experience - Jimi na Watashi to Hen na Oji-san",
+    "url": "https://www.mangaupdates.com/series/cyq9lkt/shiori-experience-jimi-na-watashi-to-hen-na-oji-san",
+    "year": "2013",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i495704.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "henjo - hen na joshi kousei amaguri chiko": {
+    "id": 64606520458,
+    "title": "Henjyo - Hen na Jyoshi Kousei Amaguri Senko",
+    "url": "https://www.mangaupdates.com/series/toh1y8a/henjyo-hen-na-jyoshi-kousei-amaguri-senko",
+    "year": "2012",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i489120.jpg",
+    "mu_score": 0.925,
+    "mu_match_type": "fuzzy"
+  },
+  "grand blue dreaming": {
+    "id": 65672018770,
+    "title": "Grand Blue",
+    "url": "https://www.mangaupdates.com/series/u63f9zm/grand-blue",
+    "year": "2014",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i502586.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "we're new at this": {
+    "id": 34214654024,
+    "title": "Mijuku na Futari de Gozaimasu ga",
+    "url": "https://www.mangaupdates.com/series/fpuis08/mijuku-na-futari-de-gozaimasu-ga",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i448741.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the way of the househusband": {
+    "id": 21920652313,
+    "title": "Gokushufudou",
+    "url": "https://www.mangaupdates.com/series/a2iznkp/gokushufudou",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i503504.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "seichou cheat de nandemo dekiru you ni natta ga, mushoku dake wa yamerarenai you desu": {
+    "id": 22366197217,
+    "title": "Seichou Cheat de Nandemo Dekiru you ni Natta ga, Mushoku dake wa Yamerarenai you desu",
+    "url": "https://www.mangaupdates.com/series/a9w9881/seichou-cheat-de-nandemo-dekiru-you-ni-natta-ga-mushoku-dake-wa-yamerarenai-you-desu",
+    "year": "2017",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i500251.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "anjo the mischievous gal": {
+    "id": 26606684515,
+    "title": "Yancha Gal no Anjou-san",
+    "url": "https://www.mangaupdates.com/series/c80xl5v/yancha-gal-no-anjou-san",
+    "year": "2017",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i501323.jpg",
+    "mu_score": 0.6,
+    "mu_match_type": "fuzzy"
+  },
+  "record of ragnarok": {
+    "id": 67808789330,
+    "title": "Shuumatsu no Valkyrie",
+    "url": "https://www.mangaupdates.com/series/v5flope/shuumatsu-no-valkyrie",
+    "year": "2017",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i494495.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "chainsaw man": {
+    "id": 75336092483,
+    "title": "Chainsaw Man",
+    "url": "https://www.mangaupdates.com/series/ylx5wzn/chainsaw-man",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i515239.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "loner life in another world": {
+    "id": 43846934554,
+    "title": "Hitoribocchi no Isekai Kouryaku",
+    "url": "https://www.mangaupdates.com/series/k55bz8a/hitoribocchi-no-isekai-kouryaku",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i514236.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "may i ask for one final thing": {
+    "id": 54446357124,
+    "title": "Saigo ni Hitotsu dake Onegai Shite mo Yoroshii Deshou ka",
+    "url": "https://www.mangaupdates.com/series/p0fye10/saigo-ni-hitotsu-dake-onegai-shite-mo-yoroshii-deshou-ka",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509332.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "blue lock": {
+    "id": 42866050067,
+    "title": "Blue Lock",
+    "url": "https://www.mangaupdates.com/series/joxc7wz/blue-lock",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i513209.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "eroko-san on the attack": {
+    "id": 49933699035,
+    "title": "Shingeki no Eroko-san: Hen na Oneesan wa Danshi Kousei to Nakayoku Naritai",
+    "url": "https://www.mangaupdates.com/series/mxt8grf/shingeki-no-eroko-san-hen-na-oneesan-wa-danshi-kousei-to-nakayoku-naritai",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i505776.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "i have a crush at work": {
+    "id": 28863717062,
+    "title": "Kono Kaisha ni Suki na Hito ga Imasu",
+    "url": "https://www.mangaupdates.com/series/d9cpmme/kono-kaisha-ni-suki-na-hito-ga-imasu",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i500814.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "takane no hana wa midaresaki": {
+    "id": 56874707455,
+    "title": "Takane no Hana wa Midaresaki",
+    "url": "https://www.mangaupdates.com/series/q4lqd4v/takane-no-hana-wa-midaresaki",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508884.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "time stop hero": {
+    "id": 52813579663,
+    "title": "Jikan Teishi Yuusha - Yomei 3-ka no Settei ja Sekai o Sukuu ni wa Mijika Sugiru",
+    "url": "https://www.mangaupdates.com/series/o9fuavj/jikan-teishi-yuusha-yomei-3-ka-no-settei-ja-sekai-o-sukuu-ni-wa-mijika-sugiru",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508898.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the coppersmith's bride": {
+    "id": 46840543875,
+    "title": "Cuprum no Hanayome",
+    "url": "https://www.mangaupdates.com/series/linneyr/cuprum-no-hanayome",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i496290.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "sakamoto days": {
+    "id": 55469435605,
+    "title": "Sakamoto Days",
+    "url": "https://www.mangaupdates.com/series/phd2ifp/sakamoto-days",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i516238.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the dangers in my heart": {
+    "id": 9143777514,
+    "title": "Boku no Kokoro no Yabai Yatsu",
+    "url": "https://www.mangaupdates.com/series/477yvvu/boku-no-kokoro-no-yabai-yatsu",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i505093.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "return to player": {
+    "id": 32447219971,
+    "title": "Return to Player",
+    "url": "https://www.mangaupdates.com/series/ewm8j5v/return-to-player",
+    "year": "2020",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i412653.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "medalist": {
+    "id": 26977861324,
+    "title": "Medalist",
+    "url": "https://www.mangaupdates.com/series/ce5x70s/medalist",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i513878.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "hunting in another world with my elf wife": {
+    "id": 27428950350,
+    "title": "Hokkaidou no Geneki Hunter ga Isekai ni Hourikoma Rete Mita - Elf Yome to Meguru Isekai Shuryou Life",
+    "url": "https://www.mangaupdates.com/series/clmhlji/hokkaidou-no-geneki-hunter-ga-isekai-ni-hourikoma-rete-mita-elf-yome-to-meguru-isekai-shuryou-life",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i503202.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the ice guy and his cool female colleague": {
+    "id": 1289931428,
+    "title": "Koori Zokusei Danshi to Cool na Douryou Joshi",
+    "url": "https://www.mangaupdates.com/series/0lbzpgk/koori-zokusei-danshi-to-cool-na-douryou-joshi",
+    "year": "2018",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i491123.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "and yet, you are so sweet": {
+    "id": 56651070960,
+    "title": "Nanoni, Chigira-kun ga Amasugiru.",
+    "url": "https://www.mangaupdates.com/series/q0wl240/nanoni-chigira-kun-ga-amasugiru",
+    "year": "2017",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i503726.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "how to grill our love": {
+    "id": 13686185541,
+    "title": "Yaiteru Futari",
+    "url": "https://www.mangaupdates.com/series/6acegcl/yaiteru-futari",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i510708.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "blue box": {
+    "id": 8517620677,
+    "title": "Ao no Hako",
+    "url": "https://www.mangaupdates.com/series/3wv666d/ao-no-hako",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i515066.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "in the clear moonlit dusk": {
+    "id": 68233124088,
+    "title": "Uruwashi no Yoi no Tsuki",
+    "url": "https://www.mangaupdates.com/series/vcg8ni0/uruwashi-no-yoi-no-tsuki",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i511864.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "no longer allowed in another world": {
+    "id": 75314842442,
+    "title": "Isekai Shikkaku",
+    "url": "https://www.mangaupdates.com/series/ylkigcq/isekai-shikkaku",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i511285.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the fragrant flower blooms with dignity": {
+    "id": 31409091299,
+    "title": "Kaoru Hana wa Rin to Saku",
+    "url": "https://www.mangaupdates.com/series/efg5tyb/kaoru-hana-wa-rin-to-saku",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509515.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the exiled heavy knight knows how to game the system": {
+    "id": 19357106615,
+    "title": "The Exiled Reincarnated Heavy Knight Is Unrivaled in Game Knowledge",
+    "url": "https://www.mangaupdates.com/series/8w4pz1z/the-exiled-reincarnated-heavy-knight-is-unrivaled-in-game-knowledge",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i511819.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "smoking behind the supermarket with you": {
+    "id": 73648673800,
+    "title": "Super no Ura de Yani Suu Futari",
+    "url": "https://www.mangaupdates.com/series/xu0ioeg/super-no-ura-de-yani-suu-futari",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i514027.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "+99 reinforced wooden stick": {
+    "id": 9550354702,
+    "title": "+99 Reinforced Wooden Stick",
+    "url": "https://www.mangaupdates.com/series/4dy18um/99-reinforced-wooden-stick",
+    "year": "2022",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i491621.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "i want to end this love game": {
+    "id": 14828779806,
+    "title": "Aishiteru Game wo Owarasetai",
+    "url": "https://www.mangaupdates.com/series/6t8o7q6/aishiteru-game-wo-owarasetai",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i488643.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "mizuki-senpai's love fortune-telling": {
+    "id": 66471617937,
+    "title": "Mizuki-senpai no Koi Uranai",
+    "url": "https://www.mangaupdates.com/series/ujbhgnl/mizuki-senpai-no-koi-uranai",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i486329.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "honey trap shared house": {
+    "id": 39789793651,
+    "title": "Honey Trap Share House",
+    "url": "https://www.mangaupdates.com/series/ia1td9v/honey-trap-share-house",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i498172.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tokimori-san ga muboubi desu!!": {
+    "id": 73658454443,
+    "title": "Tokimori-san ga Muboubi desu!!",
+    "url": "https://www.mangaupdates.com/series/xu6cb6z/tokimori-san-ga-muboubi-desu",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i513500.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "mitsuishi-san is being weird this year": {
+    "id": 50246800119,
+    "title": "Mitsuishi-san to Hajime-san",
+    "url": "https://www.mangaupdates.com/series/n2znb3r/mitsuishi-san-to-hajime-san",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i476281.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the invisible man and his soon-to-be wife": {
+    "id": 52155653432,
+    "title": "Toumei Otoko to Ningen Onna: Sonouchi Fuufu ni Naru Futari",
+    "url": "https://www.mangaupdates.com/series/nyk4nqw/toumei-otoko-to-ningen-onna-sonouchi-fuufu-ni-naru-futari",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i513825.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "starting today, we’re childhood friends": {
+    "id": 18638868981,
+    "title": "Kyou kara Hajimeru Osananajimi",
+    "url": "https://www.mangaupdates.com/series/8k93ncl/kyou-kara-hajimeru-osananajimi",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508374.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "kill blue": {
+    "id": 69563158961,
+    "title": "Kill Ao",
+    "url": "https://www.mangaupdates.com/series/vyg3wz5/kill-ao",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508476.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "i made friends with the second prettiest girl in my class": {
+    "id": 60141649317,
+    "title": "Class de 2-banme ni Kawaii Onnanoko to Tomodachi ni Natta",
+    "url": "https://www.mangaupdates.com/series/rmms9lx/class-de-2-banme-ni-kawaii-onnanoko-to-tomodachi-ni-natta",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i451549.jpg",
+    "mu_score": 0.9298245614035088,
+    "mu_match_type": "fuzzy"
+  },
+  "blooming love": {
+    "id": 11463667894,
+    "title": "Akuma no Kuchizuke",
+    "url": "https://www.mangaupdates.com/series/59l66ra/akuma-no-kuchizuke",
+    "year": "2005",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i507157.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "my wife is a little intimidating": {
+    "id": 59336986267,
+    "title": "Boku no Oku-san wa Chotto Kowai",
+    "url": "https://www.mangaupdates.com/series/r9bpjmj/boku-no-oku-san-wa-chotto-kowai",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509531.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "isshiki-san wa koi wo shiritai": {
+    "id": 17946839728,
+    "title": "Isshiki-san wa Koi o Shiritai.",
+    "url": "https://www.mangaupdates.com/series/88t325s/isshiki-san-wa-koi-o-shiritai",
+    "year": "2020",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i505583.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "isekai samurai": {
+    "id": 15941627860,
+    "title": "Isekai Samurai",
+    "url": "https://www.mangaupdates.com/series/7bn8es4/isekai-samurai",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i500478.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "boku to gal ga fufu ni narumade": {
+    "id": 64597080792,
+    "title": "Boku to Gyaru ga Fuufu ni Naru made",
+    "url": "https://www.mangaupdates.com/series/tobfmjc/boku-to-gyaru-ga-fuufu-ni-naru-made",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i462629.jpg",
+    "mu_score": 0.9393939393939394,
+    "mu_match_type": "fuzzy"
+  },
+  "now that we draw": {
+    "id": 14977995738,
+    "title": "Kakunaru Ue wa",
+    "url": "https://www.mangaupdates.com/series/6vpifh6/kakunaru-ue-wa",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509835.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "i'm gonna live with you not because my parents left me their debt but because i like you": {
+    "id": 38684813821,
+    "title": "Ryoushin no Shakkin o Katagawari Shite Morau Jouken wa Nihon Ichi Kawaii Joshikousei to Issho ni Kurasu Koto deshita.",
+    "url": "https://www.mangaupdates.com/series/hrrxtdp/ryoushin-no-shakkin-o-katagawari-shite-morau-jouken-wa-nihon-ichi-kawaii-joshikousei-to-issho-ni-kurasu-koto-deshita",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i507840.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "kyou mo veranda de": {
+    "id": 17378785661,
+    "title": "Kyou mo Veranda de",
+    "url": "https://www.mangaupdates.com/series/7zevou5/kyou-mo-veranda-de",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i476489.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tsumiki ogami's not-so-ordinary life": {
+    "id": 36302230109,
+    "title": "Ogami Tsumiki to Kinichijou.",
+    "url": "https://www.mangaupdates.com/series/godes0t/ogami-tsumiki-to-kinichijou",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509060.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tune in to the midnight heart": {
+    "id": 71662917900,
+    "title": "Mayonaka Heart Tune",
+    "url": "https://www.mangaupdates.com/series/wx691cc/mayonaka-heart-tune",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509488.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "houkago kitaku biyori": {
+    "id": 2299416720,
+    "title": "Houkago Kitaku Biyori",
+    "url": "https://www.mangaupdates.com/series/1210hao/houkago-kitaku-biyori",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i504319.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "shut up, takamori!": {
+    "id": 35673167858,
+    "title": "Takamori-kun o Damarasetai!!",
+    "url": "https://www.mangaupdates.com/series/gdyvshe/takamori-kun-o-damarasetai",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i494954.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the witch and the mercenary": {
+    "id": 63459475634,
+    "title": "Majo to Youhei",
+    "url": "https://www.mangaupdates.com/series/t5i4ss2/majo-to-youhei",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i506530.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "akanabe-sensei doesn't know about embarrassment": {
+    "id": 23897350616,
+    "title": "Akanabe-sensei wa Tereshirazu",
+    "url": "https://www.mangaupdates.com/series/az7v5qw/akanabe-sensei-wa-tereshirazu",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508805.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "ane no tomodachi": {
+    "id": 62012564923,
+    "title": "Ane no Tomodachi",
+    "url": "https://www.mangaupdates.com/series/shkohbv/ane-no-tomodachi",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i506004.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "anata-tachi soredemo sensei desu ka!": {
+    "id": 5030981209,
+    "title": "Anata-tachi Soredemo Sensei desu ka!",
+    "url": "https://www.mangaupdates.com/series/2b7bdy1/anata-tachi-soredemo-sensei-desu-ka",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i504838.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "harem ou no isekai press manyuuki": {
+    "id": 76521238075,
+    "title": "Shinrigaku de Isekai Harem Kenkokuki",
+    "url": "https://www.mangaupdates.com/series/z5irp6j/shinrigaku-de-isekai-harem-kenkokuki",
+    "year": "2019",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i302657.png",
+    "mu_score": 0.5,
+    "mu_match_type": "fuzzy"
+  },
+  "falling for her secret side": {
+    "id": 64992834754,
+    "title": "Ore wa Shiranai Uchi ni Gakkou Ichi no Bishoujo o Kudoiteita Rashii: Baito-saki no Soudan Aite ni Ore no Omoibito no Hanashi o Suru to Kanojo wa Nazeka Tere Hajimeru",
+    "url": "https://www.mangaupdates.com/series/tuv208y/ore-wa-shiranai-uchi-ni-gakkou-ichi-no-bishoujo-o-kudoiteita-rashii-baito-saki-no-soudan-aite-ni-ore-no-omoibito-no-hanashi-o-suru-to-kanojo-wa-nazeka-tere-hajimeru",
+    "year": "2022",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i493469.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "akira failing in love": {
+    "id": 70802283135,
+    "title": "Momose Akira no Hatsukoi Hatan-chuu.",
+    "url": "https://www.mangaupdates.com/series/wixunb3/momose-akira-no-hatsukoi-hatan-chuu",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509186.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tonari no kurokawa-san": {
+    "id": 76995594327,
+    "title": "Tonari no Kurokawa-san",
+    "url": "https://www.mangaupdates.com/series/zdd6st3/tonari-no-kurokawa-san",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i508903.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "ichi the witch": {
+    "id": 69937991585,
+    "title": "Ichi the Witch",
+    "url": "https://www.mangaupdates.com/series/w4n9voh/ichi-the-witch",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i507976.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "learning to love my cat-like classmate": {
+    "id": 54810551295,
+    "title": "Tonari no Neko to Koi Shirazu",
+    "url": "https://www.mangaupdates.com/series/p6gsc1r/tonari-no-neko-to-koi-shirazu",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i504847.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "monochrome days": {
+    "id": 73019722315,
+    "title": "Monochrome Days",
+    "url": "https://www.mangaupdates.com/series/xjm22bv/monochrome-days",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i502814.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "my villainous family won't let me be": {
+    "id": 63262687063,
+    "title": "My Villainous Family Won't Let Me Be",
+    "url": "https://www.mangaupdates.com/series/t28yxqv/my-villainous-family-won-t-let-me-be",
+    "year": "2023",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i497512.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the babe at my back has her eye on me. i'm done for": {
+    "id": 38268647377,
+    "title": "Ushiro no Seki no Gyaru ni Sukarete Shimatta.: Mou Ore wa Dame Kamoshirenai.",
+    "url": "https://www.mangaupdates.com/series/hkw5xap/ushiro-no-seki-no-gyaru-ni-sukarete-shimatta-mou-ore-wa-dame-kamoshirenai",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509143.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "futago matomete kanojo ni shinai?": {
+    "id": 71456335110,
+    "title": "Futago Matomete \"Kanojo\" ni Shinai?",
+    "url": "https://www.mangaupdates.com/series/wtr991i/futago-matomete-kanojo-ni-shinai",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i494622.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tonari no seki no yatsu ga souiu me de mitekuru": {
+    "id": 19942150512,
+    "title": "Tonari no Seki no Yatsu ga Eroi me de Mitekuru Hanashi",
+    "url": "https://www.mangaupdates.com/series/95t1htc/tonari-no-seki-no-yatsu-ga-eroi-me-de-mitekuru-hanashi",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i514244.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "wolf-chan wa sumashitai": {
+    "id": 43873302439,
+    "title": "Wolf-chan wa Sumashitai",
+    "url": "https://www.mangaupdates.com/series/k5l14tj/wolf-chan-wa-sumashitai",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i515416.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "childhood friend complex (eunhi)": {
+    "id": 10963267926,
+    "title": "Childhood Friend Complex (Eunhi)",
+    "url": "https://www.mangaupdates.com/series/51b8vo6/childhood-friend-complex-eunhi",
+    "year": "2024",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i515491.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "my child will have a different father": {
+    "id": 36508074610,
+    "title": "My Child Will Have a Different Father",
+    "url": "https://www.mangaupdates.com/series/grryqnm/my-child-will-have-a-different-father",
+    "year": "2024",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i499301.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "my favorite vtuber is scary irl": {
+    "id": 10264021569,
+    "title": "The Story of This Scary Consignee Girl",
+    "url": "https://www.mangaupdates.com/series/4pqxlq9/the-story-of-this-scary-consignee-girl",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i495046.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "my marriage to saneka": {
+    "id": 59612147509,
+    "title": "My Marriage to Saneka",
+    "url": "https://www.mangaupdates.com/series/rdvj7ed/my-marriage-to-saneka",
+    "year": "2025",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i515061.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the ice princess wants to be melted by a small patch of sunlight": {
+    "id": 74677968546,
+    "title": "Koori no Hime wa Chiisana Hidamari de Tokasaretai",
+    "url": "https://www.mangaupdates.com/series/yb1c1b6/koori-no-hime-wa-chiisana-hidamari-de-tokasaretai",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509139.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "shokuba no onnanoko ni toushisuru hanashi": {
+    "id": 56901099988,
+    "title": "Shokuba no Onnanoko ni Toushi Suru Hanashi",
+    "url": "https://www.mangaupdates.com/series/q51g1qs/shokuba-no-onnanoko-ni-toushi-suru-hanashi",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i480410.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the fairytale-like you goes on the assault": {
+    "id": 68475672634,
+    "title": "The Fairytale-Like You Goes on the Assault",
+    "url": "https://www.mangaupdates.com/series/vggnb5m/the-fairytale-like-you-goes-on-the-assault",
+    "year": "2021",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i380111.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "girl meets rock!": {
+    "id": 13933874837,
+    "title": "Futsu no Keionbu",
+    "url": "https://www.mangaupdates.com/series/6efvamt/futsu-no-keionbu",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509295.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "albus changes the world": {
+    "id": 64421665345,
+    "title": "Kaiten no Albus",
+    "url": "https://www.mangaupdates.com/series/tlezv41/kaiten-no-albus",
+    "year": "2024",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509061.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the long summer of august 31": {
+    "id": 12861632027,
+    "title": "8-gatsu 31-nichi no Long Summer",
+    "url": "https://www.mangaupdates.com/series/5wphesb/8-gatsu-31-nichi-no-long-summer",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i516180.jpg",
+    "mu_score": 0.9642857142857143,
+    "mu_match_type": "fuzzy"
+  },
+  "i will live the life of a villainess": {
+    "id": 67057805580,
+    "title": "I Will Live the Life of a Villainess",
+    "url": "https://www.mangaupdates.com/series/ut0hhxo/i-will-live-the-life-of-a-villainess",
+    "year": "2023",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i492823.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "reincarnated murim lord": {
+    "id": 50963634205,
+    "title": "Reincarnated Murim Lord",
+    "url": "https://www.mangaupdates.com/series/neufjtp/reincarnated-murim-lord",
+    "year": "2024",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i502124.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "the new hire is the demon lord": {
+    "id": 11519677998,
+    "title": "The New Hire Is the Demon Lord",
+    "url": "https://www.mangaupdates.com/series/5aiiofi/the-new-hire-is-the-demon-lord",
+    "year": "2024",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i458554.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "tyrant of the tower defense game": {
+    "id": 39532348244,
+    "title": "Tyrant of the Tower Defense Game",
+    "url": "https://www.mangaupdates.com/series/i5sjf4k/tyrant-of-the-tower-defense-game",
+    "year": "2022",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i489156.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "boukensha ni nare nakatta ore, skill \"oppai kyousei\" de nayameru ano ko wo hito dasuke!?": {
+    "id": 43454035121,
+    "title": "Boukensha ni Nare Nakatta Ore, Skill \"Oppai Kyousei\" de Nayameru Ano Ko wo Hito Dasuke!?",
+    "url": "https://www.mangaupdates.com/series/jynes35/boukensha-ni-nare-nakatta-ore-skill-oppai-kyousei-de-nayameru-ano-ko-wo-hito-dasuke",
+    "year": "2023",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i495936.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "genius archer's livestreaming": {
+    "id": 58567821341,
+    "title": "Genius Archer's Livestreaming",
+    "url": "https://www.mangaupdates.com/series/qwlro65/genius-archer-s-livestreaming",
+    "year": "2024",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i515981.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "date or kill ~himitsu no matching~": {
+    "id": 7227695893,
+    "title": "Date or Kill ~Himitsu no Matching~",
+    "url": "https://www.mangaupdates.com/series/3bj6lud/date-or-kill-himitsu-no-matching",
+    "year": "2025",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i509714.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "proof of dignity": {
+    "id": 42223272879,
+    "title": "Proof of Dignity",
+    "url": "https://www.mangaupdates.com/series/jean9v3/proof-of-dignity",
+    "year": "2025",
+    "type": "Manhwa",
+    "image": "https://cdn.mangaupdates.com/image/i498745.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  },
+  "haimiya-senpai wa kowakute kawaii": {
+    "id": 39677598384,
+    "title": "Haimiya-senpai wa Kowakute Kawaii",
+    "url": "https://www.mangaupdates.com/series/i870muo/haimiya-senpai-wa-kowakute-kawaii",
+    "year": "2025",
+    "type": "Manga",
+    "image": "https://cdn.mangaupdates.com/image/i515369.jpg",
+    "mu_score": 1,
+    "mu_match_type": "exact"
+  }
+}

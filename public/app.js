@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // Setup Event Listeners
 function setupEventListeners() {
     elements.form.addEventListener('submit', handleExtract);
+
+    // Setup export button listeners
+    document.querySelectorAll('.btn-export').forEach(btn => {
+        btn.addEventListener('click', handleDownload);
+    });
 }
 
 // Handle Extract Form Submission
@@ -85,9 +90,10 @@ function handleExtractionSuccess(data) {
     console.log('Extraction success:', data);
     state.subscriptions = data.subscriptions;
 
-    // Session ID is still returned but not used for exports anymore
+    // Session ID is needed for exports
     if (data.sessionId) {
-        console.log('Session ID:', data.sessionId);
+        state.sessionId = data.sessionId;
+        console.log('Session ID stored:', state.sessionId);
     }
 
     updateUIState('success');
@@ -107,6 +113,10 @@ function displayResults() {
     });
 
     elements.resultsSection.classList.remove('hidden');
+
+    // Reset Export Flow
+    document.getElementById('step1Group').classList.remove('hidden');
+    document.getElementById('step2Group').classList.add('hidden');
 
     setTimeout(() => {
         elements.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -154,6 +164,146 @@ function createSubscriptionCard(subscription) {
     }
 
     return card;
+}
+
+// Handle Download Button Click
+async function handleDownload(e) {
+    const fileFormat = e.currentTarget.dataset.file;
+
+    if (!state.subscriptions || state.subscriptions.length === 0) {
+        showNotification('No subscriptions to export.', 'error');
+        return;
+    }
+
+    // Step 1: Verification (Enrichment)
+    if (fileFormat === 'enrichment') {
+        const status = await checkEnrichmentStatus('mangaupdates');
+        if (status === 'complete') {
+            // Already complete, just show buttons
+            document.getElementById('step1Group').classList.add('hidden');
+            document.getElementById('step2Group').classList.remove('hidden');
+            showNotification('Verification already complete!', 'success');
+        } else {
+            startEnrichment('mangaupdates', null);
+        }
+        return;
+    }
+
+    // Step 2: Downloads (Direct)
+    triggerDownload(fileFormat);
+}
+
+// Helper to check enrichment status
+async function checkEnrichmentStatus(target) {
+    try {
+        // We need the sessionId. In the new flow, we might need to store it better.
+        // The server returns it in /api/extract. 
+        // We stored it in state.sessionId in handleExtractionSuccess (if we added that line back).
+        // Let's make sure handleExtractionSuccess stores it.
+        if (!state.sessionId) return 'idle';
+
+        const res = await fetch(`/api/session/${state.sessionId}`);
+        const data = await res.json();
+        return data.enrichment && data.enrichment[target] ? data.enrichment[target].status : 'idle';
+    } catch (err) {
+        console.error('Error checking status:', err);
+        return 'error';
+    }
+}
+
+// Trigger Actual Download
+function triggerDownload(format) {
+    if (!state.sessionId) {
+        showNotification('Session expired. Please extract again.', 'error');
+        return;
+    }
+    const downloadUrl = `/api/download/${state.sessionId}/${format}`;
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showNotification(`Download started`, 'success');
+}
+
+// Start Enrichment Process
+async function startEnrichment(target, finalFormat) {
+    const modal = document.getElementById('enrichModal');
+    const fill = document.getElementById('enrichmentFill');
+    const count = document.getElementById('enrichmentCount');
+    const eta = document.getElementById('enrichmentEta');
+
+    // Reset Modal UI
+    fill.style.width = '0%';
+    count.textContent = 'Starting...';
+    eta.textContent = 'Calculating...';
+    modal.classList.remove('hidden');
+
+    try {
+        if (!state.sessionId) throw new Error("No active session");
+
+        // Start process
+        await fetch('/api/enrich', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: state.sessionId, target })
+        });
+
+        // Poll progress
+        const poll = setInterval(async () => {
+            const res = await fetch(`/api/session/${state.sessionId}`);
+            const data = await res.json();
+
+            if (!data.enrichment || !data.enrichment[target]) {
+                return;
+            }
+
+            const status = data.enrichment[target];
+
+            if (status.status === 'complete') {
+                if (status.status === 'complete') {
+                    clearInterval(poll);
+                    modal.classList.add('hidden');
+
+                    // Check for low confidence matches
+                    // Fetch the full list to check scores
+                    const sessionRes = await fetch(`/api/session/${state.sessionId}`);
+                    const sessionData = await sessionRes.json();
+
+                    // Identify items that need review
+                    // Config: Review if score < 0.9 and type != 'exact' (and has a match)
+                    const needsReview = sessionData.enrichment.mangaupdates.current > 0 ? // just to be safe it's populated
+                        sessionData.enrichment.mangaupdates.items : [];
+                    // Wait, the API doesn't return items in the status object.
+                    // We need to fetch the subscriptions from /api/extract? No, that was initial.
+                    // We need an endpoint to get the items? 
+                    // Ah, /api/extract returned them initially. 
+                    // We can just rely on the FACT that we need to RE-FETCH the finalized list?
+                    // Actually, let's add a `subscriptions` field to the /api/session response
+
+                    checkReviewNeeded();
+                }
+            }
+            else if (status.status === 'error') {
+                clearInterval(poll);
+                modal.classList.add('hidden');
+                showNotification('Verification failed. Please try again.', 'error');
+            }
+            else {
+                // Update UI
+                const percent = (status.current / status.total) * 100;
+                fill.style.width = `${percent}%`;
+                count.textContent = `Processing ${status.current}/${status.total}`;
+                eta.textContent = 'Please wait...';
+            }
+        }, 1000);
+
+    } catch (err) {
+        console.error('Enrichment error:', err);
+        modal.classList.add('hidden');
+        showNotification('Failed to start enrichment', 'error');
+    }
 }
 
 // Update UI State
@@ -255,4 +405,120 @@ function showNotification(message, type = 'info') {
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
+}
+
+// Check if review is needed
+async function checkReviewNeeded() {
+    try {
+        const res = await fetch(`/api/session/${state.sessionId}`);
+        const data = await res.json();
+        const subs = data.subscriptions;
+
+        // Filter: Has a match (mu_id) but is Fuzzy and score < 0.9
+        const lowConfidence = subs.map((sub, index) => ({ sub, index })).filter(item => {
+            return item.sub.mu_id && item.sub.mu_match_type !== 'exact' && item.sub.mu_score < 0.9;
+        });
+
+        if (lowConfidence.length > 0) {
+            showReviewModal(lowConfidence);
+        } else {
+            finalizeEnrichment();
+        }
+
+    } catch (err) {
+        console.error("Error checking review:", err);
+        finalizeEnrichment(); // Fail safe
+    }
+}
+
+// Show Review Modal
+function showReviewModal(items) {
+    const modal = document.getElementById('reviewModal');
+    const list = document.getElementById('reviewList');
+    list.innerHTML = '';
+
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'review-item';
+
+        const scoreClass = item.sub.mu_score > 0.8 ? 'score-high' :
+            (item.sub.mu_score > 0.6 ? 'score-med' : 'score-low');
+        const scorePercent = Math.round(item.sub.mu_score * 100);
+
+        div.innerHTML = `
+            <input type="checkbox" class="review-checkbox" data-index="${item.index}" checked>
+            
+            <div class="title-cell" title="${item.sub.title}">
+                ${item.sub.title}
+            </div>
+
+            <div class="arrow-cell">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </div>
+
+            <div class="match-cell">
+                <a href="${item.sub.mu_url}" target="_blank" class="match-title" title="${item.sub.mu_title}">
+                    ${item.sub.mu_title}
+                </a>
+                <span class="match-meta">${item.sub.mu_year || '?'} • ${item.sub.mu_type || 'Manga'}</span>
+            </div>
+
+            <div class="score-cell">
+                <span class="match-score ${scoreClass}">${scorePercent}%</span>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+
+    modal.classList.remove('hidden');
+
+    // Bind Confirm Button
+    const confirmBtn = document.getElementById('confirmReviewBtn');
+    confirmBtn.onclick = async () => {
+        // Collect unchecked items (msg: "add only those selected")
+        // So unchecked = rejected
+        const checkboxes = list.querySelectorAll('.review-checkbox');
+        const rejectedIndices = [];
+
+        checkboxes.forEach(cb => {
+            if (!cb.checked) {
+                rejectedIndices.push(parseInt(cb.dataset.index));
+            }
+        });
+
+        // Send update
+        try {
+            confirmBtn.textContent = 'Updating...';
+            confirmBtn.disabled = true;
+
+            await fetch('/api/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: state.sessionId,
+                    rejectedIndices
+                })
+            });
+
+            modal.classList.add('hidden');
+            finalizeEnrichment();
+
+        } catch (err) {
+            console.error(err);
+            showNotification('Error updating selections', 'error');
+        } finally {
+            confirmBtn.textContent = 'Confirm & Continue';
+            confirmBtn.disabled = false;
+        }
+    };
+}
+
+// Finalize
+function finalizeEnrichment() {
+    // Switch to Export Step
+    document.getElementById('step1Group').classList.add('hidden');
+    document.getElementById('step2Group').classList.remove('hidden');
+    showNotification('Verification complete! You can now download exports.', 'success');
 }

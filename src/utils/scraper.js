@@ -26,18 +26,29 @@ export async function scrapeSubscriptions(profileUrl) {
 
     const page = await browser.newPage();
 
+    // Optimize: Block images, fonts, styles to speed up loading
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (['image', 'stylesheet', 'font', 'media'].includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
     // Set user agent
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
     console.log(`Navigating to profile...`);
     try {
-      await page.goto(profileUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+      // Optimized wait condition: domcontentloaded is faster than networkidle2
+      await page.goto(profileUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     } catch (error) {
       console.log(`Page load issue, retrying...`);
-      await page.reload({ waitUntil: 'networkidle2', timeout: 30000 });
+      await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
     }
     // Wait for initial load
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     console.log(`Looking for Subscriptions tab...`);
 
@@ -117,7 +128,7 @@ export async function scrapeSubscriptions(profileUrl) {
       if (clickedViewMore) {
         clicks++;
         console.log(`Clicked View More (${clicks})...`);
-        await page.waitForTimeout(2000); // Increased wait time
+        await page.waitForTimeout(800); // Reduced from 2000ms for speed
       }
     }
 
