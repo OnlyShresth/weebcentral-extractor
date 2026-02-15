@@ -1,14 +1,15 @@
 import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { scrapeSubscriptions } from './utils/scraper.js';
+import log from './utils/logger.js';
 
 // Redis Connection
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
-// Check if Redis is available (simple heuristic or env var)
-const USE_REDIS = process.env.USE_REDIS === 'true'; // Default to false unless explicitly enabled to avoid errors
+// Check if Redis is available
+const USE_REDIS = process.env.USE_REDIS === 'true';
 
-console.log(`ℹ️ Redis Queue is ${USE_REDIS ? 'ENABLED' : 'DISABLED (Using In-Memory Fallback)'}`);
+log.queue(`Redis queue is ${USE_REDIS ? 'ENABLED' : 'DISABLED (in-memory fallback)'}`);
 
 let scrapeQueue;
 let worker;
@@ -31,7 +32,7 @@ class MockQueue {
             data,
             returnvalue: null,
             failedReason: null,
-            state: 'waiting', // waiting, active, completed, failed
+            state: 'waiting',
             timestamp: Date.now(),
             getState: async () => job.state
         };
@@ -56,7 +57,7 @@ class MockQueue {
             job.returnvalue = result;
             job.state = 'completed';
         } catch (err) {
-            console.error(`Job ${job.id} failed:`, err);
+            log.error(`Job ${job.id} failed: ${err.message}`);
             job.failedReason = err.message;
             job.state = 'failed';
         }
@@ -83,7 +84,7 @@ if (USE_REDIS) {
 export function initWorker(browser) {
     const processor = async job => {
         const { profileUrl } = job.data;
-        console.log(`Job ${job.id}: Scraping ${profileUrl}`);
+        log.queue(`Job ${job.id}: Scraping ${profileUrl}`);
         const result = await scrapeSubscriptions(profileUrl, browser);
         return result;
     };
@@ -94,19 +95,19 @@ export function initWorker(browser) {
         worker = new Worker('weebcentral-scrape', processor, { connection, concurrency: 2 });
 
         worker.on('completed', job => {
-            console.log(`Job ${job.id} completed!`);
+            log.ok(`Job ${job.id} completed`);
         });
         worker.on('failed', (job, err) => {
-            console.error(`Job ${job.id} failed:`, err);
+            log.error(`Job ${job.id} failed: ${err.message}`);
         });
     } else {
         // Mock Worker (Just attaches processor to queue)
         scrapeQueue.process(processor);
-        console.log('👷 In-Memory Scrape Worker initialized');
+        log.queue('In-memory scrape worker initialized');
         return scrapeQueue;
     }
 
-    console.log('👷 Redis Scrape Worker initialized');
+    log.queue('Redis scrape worker initialized');
     return worker;
 }
 

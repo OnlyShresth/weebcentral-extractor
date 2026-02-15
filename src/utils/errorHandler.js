@@ -2,6 +2,8 @@
  * Error handling utilities and middleware
  */
 
+import log from './logger.js';
+
 /**
  * Custom error classes
  */
@@ -33,16 +35,13 @@ export class NotFoundError extends Error {
  * Express error handling middleware
  */
 export function errorHandler(err, req, res, next) {
-    // Log error
-    console.error('❌ Error:', err.message);
+    log.error(`${err.name}: ${err.message}`);
     if (process.env.DEBUG === 'true') {
         console.error(err.stack);
     }
-    
-    // Determine status code
+
     const statusCode = err.statusCode || 500;
-    
-    // Send error response
+
     res.status(statusCode).json({
         success: false,
         error: err.message,
@@ -59,29 +58,5 @@ export function asyncHandler(fn) {
     };
 }
 
-/**
- * Logger utility
- */
-export const logger = {
-    info: (message, ...args) => {
-        console.log(`ℹ️  ${message}`, ...args);
-    },
-    
-    success: (message, ...args) => {
-        console.log(`✅ ${message}`, ...args);
-    },
-    
-    warn: (message, ...args) => {
-        console.warn(`⚠️  ${message}`, ...args);
-    },
-    
-    error: (message, ...args) => {
-        console.error(`❌ ${message}`, ...args);
-    },
-    
-    debug: (message, ...args) => {
-        if (process.env.DEBUG === 'true') {
-            console.log(`🔍 ${message}`, ...args);
-        }
-    }
-};
+// Re-export the centralized logger for backwards compatibility
+export { log as logger };

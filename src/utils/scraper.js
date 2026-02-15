@@ -1,5 +1,5 @@
 // Puppeteer import removed, passed from server
-
+import log from './logger.js';
 
 /**
  * Scrapes subscription data from a WeebCentral profile
@@ -12,7 +12,7 @@ export async function scrapeSubscriptions(profileUrl, browser) {
   let page;
 
   try {
-    console.log(`Using shared browser for: ${profileUrl}`);
+    log.scrape(`Starting scrape for: ${profileUrl}`);
 
     // Create new page from shared browser
     page = await browser.newPage();
@@ -30,18 +30,18 @@ export async function scrapeSubscriptions(profileUrl, browser) {
     // Set user agent
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-    console.log(`Navigating to profile...`);
+    log.scrape('Navigating to profile...');
     try {
       // Optimized wait condition: domcontentloaded is faster than networkidle2
       await page.goto(profileUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     } catch (error) {
-      console.log(`Page load issue, retrying...`);
+      log.warn('Page load issue, retrying...');
       await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
     }
     // Wait for initial load
     await page.waitForTimeout(1000);
 
-    console.log(`Looking for Subscriptions tab...`);
+    log.scrape('Looking for Subscriptions tab...');
 
     // Click the Subscriptions tab
     const subscriptionsTabClicked = await page.evaluate(() => {
@@ -55,29 +55,25 @@ export async function scrapeSubscriptions(profileUrl, browser) {
       });
 
       if (subscriptionTab) {
-        console.log('Found subscription button:', subscriptionTab.textContent);
         subscriptionTab.click();
         return true;
       }
 
-      console.log('Could not find subscription button');
-      console.log('Available buttons:', buttons.map(b => b.textContent?.trim()));
       return false;
     });
 
     if (!subscriptionsTabClicked) {
-      console.log(`First attempt failed, trying alternative selector...`);
+      log.scrape('First attempt failed, trying alternative selector...');
 
       // Alternative: try clicking by looking for any element with "Subscriptions ("
       await page.evaluate(() => {
         const allElements = Array.from(document.querySelectorAll('*'));
         const subElement = allElements.find(el => {
           const text = (el.textContent || '').trim();
-          return text === 'Subscriptions (95)' || (text.startsWith('Subscriptions (') && el.offsetParent !== null);
+          return text.startsWith('Subscriptions (') && el.offsetParent !== null;
         });
 
         if (subElement) {
-          console.log('Found via alternative method:', subElement.textContent);
           subElement.click();
         }
       });
@@ -88,14 +84,14 @@ export async function scrapeSubscriptions(profileUrl, browser) {
 
 
     if (subscriptionsTabClicked) {
-      console.log(`Clicked Subscriptions tab, waiting for content...`);
+      log.scrape('Clicked Subscriptions tab, waiting for content...');
       await page.waitForTimeout(3000);
     } else {
-      console.log(`Could not find Subscriptions tab`);
+      log.warn('Could not find Subscriptions tab');
     }
 
     // Click "View More" button repeatedly to load all subscriptions
-    console.log(`Loading all subscriptions via pagination...`);
+    log.scrape('Loading all subscriptions via pagination...');
     let hasMore = true;
     let clicks = 0;
     const maxClicks = 100;
@@ -125,17 +121,13 @@ export async function scrapeSubscriptions(profileUrl, browser) {
 
       if (hasMore) {
         clicks++;
-        if (clicks % 5 === 0) console.log(`Clicked View More (${clicks})...`);
+        if (clicks % 5 === 0) log.scrape(`Pagination progress: ${clicks} pages loaded`);
 
         // Wait for new items to appear
         try {
           await page.waitForFunction((prevCount) => {
             const images = Array.from(document.querySelectorAll('img'));
             const currentCount = images.filter(img => (img.alt || '').toLowerCase().includes('cover')).length;
-
-            // Also check if "View More" is gone, meaning we might be done? 
-            // No, just wait for count increase OR button to disappear/change state?
-            // Minimal: wait for count increase.
             return currentCount > prevCount;
           }, { timeout: 10000, polling: 500 }, previousItemCount);
 
@@ -143,24 +135,21 @@ export async function scrapeSubscriptions(profileUrl, browser) {
           previousItemCount = await page.evaluate(countItems);
 
         } catch (e) {
-          console.warn(`Timeout waiting for new items after click ${clicks}. This might be the end or a slow connection.`);
-          // If we timed out, verify if the "View More" button is still there. 
-          // If it IS there, maybe we clicked but it failed? Or maybe there ARE no more items but the button remains?
-          // Let's break the loop to avoid infinite clicking if no new items appear.
+          log.warn(`Timeout after click ${clicks}. Possible end of list.`);
           const isButtonStillThere = await page.evaluate(() => {
             const buttons = Array.from(document.querySelectorAll('button'));
             return !!buttons.find(btn => (btn.textContent || '').trim() === 'View More');
           });
 
           if (isButtonStillThere) {
-            console.warn("View More button persists but no new items loaded. Stopping.");
+            log.warn('View More button persists but no new items loaded. Stopping.');
             hasMore = false;
           }
         }
       }
     }
 
-    console.log(`Clicked View More ${clicks} times total`);
+    log.scrape(`Pagination complete. ${clicks} pages loaded.`);
 
     // Wait for final render
     await page.waitForTimeout(1000);
@@ -169,10 +158,9 @@ export async function scrapeSubscriptions(profileUrl, browser) {
     const itemCount = await page.evaluate(() => {
       return document.querySelectorAll('img').length;
     });
-    console.log(`Total images on page: ${itemCount}`);
+    log.scrape(`Total images found on page: ${itemCount}`);
 
-
-    console.log(`Finished pagination. Extracting subscription data...`);
+    log.scrape('Extracting subscription data...');
 
     // Extract all subscriptions from the page
     const subscriptions = await page.evaluate(() => {
@@ -224,14 +212,14 @@ export async function scrapeSubscriptions(profileUrl, browser) {
       return results;
     });
 
-    console.log(`Found ${subscriptions.length} subscriptions`);
+    log.ok(`Found ${subscriptions.length} subscriptions`);
 
     await page.close();
     return subscriptions;
 
   } catch (error) {
     if (page) await page.close();
-    console.error('Error scraping profile:', error.message);
+    log.error(`Scrape failed: ${error.message}`);
     throw new Error(`Failed to scrape profile: ${error.message}`);
   }
 }

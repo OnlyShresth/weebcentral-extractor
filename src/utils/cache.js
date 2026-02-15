@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
+import log from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CACHE_FILE = path.join(__dirname, '../../cache_mangaupdates.json');
 
 // MongoDB Configuration
-// const MONGO_URI = process.env.MONGODB_URI; // Moved inside initCache()
 const DB_NAME = 'weebcentral_extractor';
 const COLLECTION_NAME = 'mu_cache';
 
@@ -31,20 +31,19 @@ async function initCache() {
     // Try connecting to MongoDB first
     if (MONGO_URI) {
         try {
-            console.log('🍃 Connecting to MongoDB...');
+            log.cache('Connecting to MongoDB...');
             dbClient = new MongoClient(MONGO_URI);
             await dbClient.connect();
             const db = dbClient.db(); // Use database from URI
             dbCollection = db.collection(COLLECTION_NAME);
             useMongo = true;
-            console.log('✅ Connected to MongoDB Cache');
+            log.ok('Connected to MongoDB cache');
             return;
         } catch (err) {
-            console.warn('⚠️ MongoDB connection failed, falling back to file cache:', err.message);
+            log.warn(`MongoDB connection failed, falling back to file cache: ${err.message}`);
         }
     } else {
-        console.log('ℹ️ No MONGODB_URI found (Check .env file!), using local file cache.');
-        // console.log('DEBUG: process.env keys:', Object.keys(process.env).filter(k => k.includes('MONGO')));
+        log.info('No MONGODB_URI found, using local file cache.');
     }
 
     // Fallback to File Cache
@@ -58,10 +57,10 @@ function loadLocalCache() {
             const data = fs.readFileSync(CACHE_FILE, 'utf8');
             const json = JSON.parse(data);
             localCache = new Map(Object.entries(json));
-            console.log(`📦 Loaded ${localCache.size} items from local file cache.`);
+            log.cache(`Loaded ${localCache.size} items from local file cache`);
         }
     } catch (error) {
-        console.error('Failed to load local cache:', error);
+        log.error(`Failed to load local cache: ${error.message}`);
     }
 }
 
@@ -76,7 +75,7 @@ export async function getFromCache(key) {
             const doc = await dbCollection.findOne({ _id: normalizedKey });
             return doc ? doc.value : null;
         } catch (err) {
-            console.error('Error reading from MongoDB:', err);
+            log.error(`Cache read failed: ${err.message}`);
             return null;
         }
     }
@@ -92,17 +91,17 @@ export async function setToCache(key, value) {
 
     if (useMongo && dbCollection) {
         try {
-            console.log(`💾 Saving to MongoDB: ${normalizedKey}`);
+            log.cache(`Saving to MongoDB: ${normalizedKey}`);
             await dbCollection.updateOne(
                 { _id: normalizedKey },
                 { $set: { value, updatedAt: new Date() } },
                 { upsert: true }
             );
         } catch (err) {
-            console.error('Error writing to MongoDB:', err);
+            log.error(`Cache write failed: ${err.message}`);
         }
     } else {
-        console.log(`💾 Saving to local cache: ${normalizedKey}`);
+        log.cache(`Saving to local cache: ${normalizedKey}`);
         localCache.set(normalizedKey, value);
         isDirty = true;
         saveLocalCache();
@@ -117,7 +116,7 @@ function saveLocalCache() {
         fs.writeFileSync(CACHE_FILE, JSON.stringify(obj, null, 2), 'utf8');
         isDirty = false;
     } catch (error) {
-        console.error('Failed to save local cache:', error);
+        log.error(`Failed to save local cache: ${error.message}`);
     }
 }
 

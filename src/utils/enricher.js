@@ -1,4 +1,5 @@
 import { getFromCache, setToCache } from './cache.js';
+import log, { divider } from './logger.js';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -30,7 +31,6 @@ function calculateSimilarity(a, b) {
     const jaccardScore = intersection.size / union.size;
 
     // 3. Levenshtein Distance (for typos or short titles)
-    // Only calculate if strings are somewhat similar in length
     let levScore = 0;
     if (Math.abs(s1.length - s2.length) < 5) {
         const matrix = [];
@@ -55,8 +55,7 @@ function calculateSimilarity(a, b) {
         levScore = 1 - (distance / maxLength);
     }
 
-    // Weighted Score: Jaccard is usually better for titles, Levenshtein for short words
-    // If Jaccard is high, trust it. If strings are short, trust Levenshtein.
+    // Weighted Score
     if (s1.length < 5 || s2.length < 5) {
         return levScore;
     }
@@ -65,7 +64,7 @@ function calculateSimilarity(a, b) {
 }
 
 // Rate Limiting State
-let minDelay = 1000; // conservative default
+let minDelay = 1000;
 let currentDelay = 500;
 let lastRequestTime = 0;
 
@@ -79,7 +78,7 @@ async function fetchBestMangaUpdatesMatch(title) {
         // 1. Check Cache
         const cached = await getFromCache(title);
         if (cached) {
-            console.log(`⚡ Cache Hit: "${title}" -> "${cached.title}"`);
+            log.cache(`Hit: "${title}" -> "${cached.title}"`);
             return cached;
         }
 
@@ -99,16 +98,15 @@ async function fetchBestMangaUpdatesMatch(title) {
 
         if (!response.ok) {
             if (response.status === 429) {
-                console.warn(`⚠️ Rate limited. Backing off...`);
-                currentDelay += 500; // Increase delay
-                await delay(2000); // Wait out the cooldown
+                log.warn('Rate limited by MangaUpdates API. Backing off...');
+                currentDelay += 500;
+                await delay(2000);
                 return fetchBestMangaUpdatesMatch(title); // Retry
             }
             return null;
         }
 
-        // If successful, maybe we can slowly speed up? 
-        // nah, let's keep it steady to avoid aggressive backoffs
+        // Slowly speed up if successful
         if (currentDelay > 500 && Math.random() > 0.8) {
             currentDelay -= 50;
         }
@@ -130,7 +128,7 @@ async function fetchBestMangaUpdatesMatch(title) {
             const normalizedHit = hitTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
 
             if (normalizedResult === normalizedSearch || normalizedHit === normalizedSearch) {
-                console.log(`🎯 Exact Match: "${title}" -> "${muTitle}"`);
+                log.match(`Exact: "${title}" -> "${muTitle}"`);
                 const formatted = formatResult(result.record, 1.0, 'exact');
                 await setToCache(title, formatted);
                 return formatted;
@@ -159,18 +157,18 @@ async function fetchBestMangaUpdatesMatch(title) {
         }
 
         if (highestScore < 0.4) {
-            console.warn(`❌ No good match for "${title}"`);
+            log.warn(`No good match for "${title}"`);
             return null;
         }
 
-        console.log(`✅ Match: "${title}" -> "${bestMatch.title}" (${highestScore.toFixed(2)})`);
+        log.match(`Fuzzy: "${title}" -> "${bestMatch.title}" (${highestScore.toFixed(2)})`);
 
         const finalResult = formatResult(bestMatch, highestScore, 'fuzzy');
         await setToCache(title, finalResult);
         return finalResult;
 
     } catch (error) {
-        console.error(`Error fetching MU for "${title}":`, error.message);
+        log.error(`MU fetch failed for "${title}": ${error.message}`);
         return null;
     }
 }
@@ -196,12 +194,13 @@ function formatResult(record, score = 0, matchType = 'fuzzy') {
  * Uses concurrency pool for faster processing
  */
 export async function enrichWithMangaUpdates(subscriptions, onProgress) {
-    console.log(`\n🔍 Smart Enriching ${subscriptions.length} items...`);
+    divider('ENRICHMENT');
+    log.info(`Enriching ${subscriptions.length} items with MangaUpdates data...`);
     const enriched = [...subscriptions];
     let processed = 0;
 
     // Concurrency Limit
-    const CONCURRENCY = 2; // Be careful with this api
+    const CONCURRENCY = 2;
     const queue = [];
 
     // Helper to process one item
@@ -234,5 +233,6 @@ export async function enrichWithMangaUpdates(subscriptions, onProgress) {
         await Promise.all(chunk);
     }
 
+    divider('ENRICHMENT COMPLETE');
     return enriched;
 }

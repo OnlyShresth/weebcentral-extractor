@@ -7,6 +7,7 @@ import { enrichWithMangaUpdates } from './utils/enricher.js';
 import { exportToMUTxt, exportToPlainTxt } from './exporters/mangaupdates.js';
 import puppeteer from 'puppeteer';
 import { scrapeQueue, initWorker } from './queue.js';
+import log, { banner, table } from './utils/logger.js';
 
 // Global browser instance
 let globalBrowser;
@@ -25,12 +26,12 @@ async function initBrowser() {
         '--disable-gpu'
       ]
     });
-    console.log("✅ Global browser launched");
+    log.ok('Browser instance launched');
 
     // Initialize Worker
     globalWorker = initWorker(globalBrowser);
   } catch (err) {
-    console.error("❌ Failed to launch browser/worker:", err);
+    log.error(`Failed to launch browser: ${err.message}`);
     process.exit(1);
   }
 }
@@ -88,7 +89,7 @@ app.post('/api/extract', async (req, res) => {
 
     if (!globalBrowser) return res.status(503).json({ error: 'Server warming up...' });
 
-    console.log(`🚀 Queuing extraction for: ${profileUrl}`);
+    log.server(`Queuing extraction for: ${profileUrl}`);
 
     // Add job to queue
     const job = await scrapeQueue.add('extract', { profileUrl });
@@ -100,7 +101,7 @@ app.post('/api/extract', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Error in /api/extract:', error);
+    log.error(`/api/extract failed: ${error.message}`);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -123,15 +124,7 @@ app.get('/api/job/:jobId', async (req, res) => {
 
   // If completed, creating session immediately for simplicity
   if (state === 'completed' && result) {
-    // Create session here so frontend logic remains similar
-    // Ideally we'd move session creation to the worker, but this is a quick refactor
-
-    // Check if session already exists for this job (prevent duplicate sessions on polling)
-    // ... simplistic approach: just return result and let frontend call a "create session" endpoint?
-    // Better: Create session transparently here and return sessionId
-
     const userId = extractUserId(job.data.profileUrl);
-    // Create session ID based on job ID to be deterministic/idempotent
     const sessionId = `session-${jobId}`;
 
     if (!sessions.has(sessionId)) {
@@ -191,7 +184,7 @@ app.post('/api/enrich', (req, res) => {
       session.enrichment.mangaupdates.current = session.subscriptions.length;
     })
     .catch(err => {
-      console.error(`❌ Enrichment error (mangaupdates):`, err);
+      log.error(`Enrichment error: ${err.message}`);
       session.enrichment.mangaupdates.status = 'error';
     });
 
@@ -204,10 +197,6 @@ app.post('/api/enrich', (req, res) => {
  */
 app.post('/api/update', (req, res) => {
   const { sessionId, updates } = req.body;
-  // updates: Array of { index, keep } or similar. 
-  // actually, let's just accept a list of indices to "reject" (reset to unmatched)
-  // or a list of "approved" items?
-  // Simplest: The frontend sends the indices of items to REMOVE match data from.
 
   const session = sessions.get(sessionId);
   if (!session) return res.status(404).json({ error: 'Session not found' });
@@ -217,13 +206,11 @@ app.post('/api/update', (req, res) => {
   if (Array.isArray(rejectedIndices)) {
     rejectedIndices.forEach(index => {
       if (session.subscriptions[index]) {
-        // Reset match data for this item
         const sub = session.subscriptions[index];
         sub.mu_id = null;
-        sub.mu_title = sub.title; // Revert to original
+        sub.mu_title = sub.title;
         sub.mu_url = null;
         sub.mu_year = null;
-        // keep mu_score/type for debugging? nah, reset them
         sub.mu_score = 0;
         sub.mu_match_type = 'none';
       }
@@ -294,7 +281,7 @@ app.get('/api/download/:sessionId/:format', (req, res) => {
     res.send(content);
 
   } catch (error) {
-    console.error('❌ Error in /api/download:', error);
+    log.error(`/api/download failed: ${error.message}`);
     res.status(500).send('Error generating download');
   }
 });
@@ -308,15 +295,9 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════════════════════╗
-║                                                       ║
-║     🎌  WEEBCENTRAL SUBSCRIPTION EXTRACTOR  🎌       ║
-║                                                       ║
-║  Server running at: http://localhost:${PORT}          ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
-  `);
+  banner('WEEBCENTRAL SUBSCRIPTION EXTRACTOR', [
+    `Server running at: http://localhost:${PORT}`
+  ]);
 });
 
 export default app;
